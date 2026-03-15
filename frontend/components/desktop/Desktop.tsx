@@ -9,7 +9,7 @@ import { AppDrawer } from "./AppDrawer";
 import { Dashboard } from "../dashboard/Dashboard";
 
 export function Desktop() {
-  const { showAppDrawer, setShowAppDrawer, setShowDashboard, showDashboard } = useDesktopStore();
+  const { showAppDrawer, setShowAppDrawer, setShowDashboard, showDashboard, wallpaper } = useDesktopStore();
   const { focusedWindowId, minimizeWindow, maximizeWindow, closeWindow } = useWindowStore();
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -45,9 +45,18 @@ export function Desktop() {
   return (
     <div
       className="relative w-screen h-screen overflow-hidden select-none"
-      style={{
-        background: "radial-gradient(ellipse at 50% 60%, #0d3d2e 0%, #061209 60%, #020805 100%)",
-      }}
+      style={(() => {
+        if (!wallpaper) return { background: "radial-gradient(ellipse at 50% 60%, #0d3d2e 0%, #061209 60%, #020805 100%)" };
+        const PRESET_CSS: Record<string, string> = {
+          "preset:midnight": "radial-gradient(ellipse at 30% 40%, #0d1a3d 0%, #060a12 60%, #020408 100%)",
+          "preset:dusk": "radial-gradient(ellipse at 60% 30%, #2d1a3d 0%, #12060e 60%, #080208 100%)",
+          "preset:ember": "radial-gradient(ellipse at 50% 70%, #3d1a0d 0%, #120806 60%, #080202 100%)",
+          "preset:slate": "radial-gradient(ellipse at 50% 50%, #1a1f2e 0%, #0a0c12 60%, #050608 100%)",
+          "preset:void": "#020202",
+        };
+        if (wallpaper.startsWith("preset:")) return { background: PRESET_CSS[wallpaper] ?? "" };
+        return { backgroundImage: `url(${wallpaper})`, backgroundSize: "cover", backgroundPosition: "center" };
+      })()}
     >
       <TopBar />
       <WindowManager />

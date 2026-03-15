@@ -7,10 +7,12 @@ import { SystemPanel } from "./SystemPanel";
 import { ShortcutsPanel } from "./ShortcutsPanel";
 import { ApplicationsPanel } from "./ApplicationsPanel";
 import { SessionsPanel } from "./SessionsPanel";
+import { AppearancePanel } from "./AppearancePanel";
 
 const NAV = [
   { id: "credits", label: "Credits", icon: "💳" },
   { id: "profile", label: "Profile", icon: "👤" },
+  { id: "appearance", label: "Appearance", icon: "🎨" },
   { id: "system", label: "System", icon: "⚙️" },
   { id: "shortcuts", label: "Shortcuts", icon: "⌨️" },
   { id: "applications", label: "Applications", icon: "📦" },
@@ -20,6 +22,7 @@ const NAV = [
 const PANELS: Record<string, React.ReactNode> = {
   credits: <CreditsPanel />,
   profile: <ProfilePanel />,
+  appearance: <AppearancePanel />,
   system: <SystemPanel />,
   shortcuts: <ShortcutsPanel />,
   applications: <ApplicationsPanel />,

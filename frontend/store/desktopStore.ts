@@ -1,5 +1,10 @@
 import { create } from "zustand";
 
+function loadWallpaper(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem("desktop_wallpaper");
+}
+
 interface DesktopState {
   dockPosition: "bottom" | "left";
   showAppDrawer: boolean;
@@ -7,12 +12,14 @@ interface DesktopState {
   dashboardPanel: string;
   showUserMenu: boolean;
   showAuthPopup: boolean;
+  wallpaper: string | null;
   setDockPosition: (pos: "bottom" | "left") => void;
   setShowAppDrawer: (v: boolean) => void;
   setShowDashboard: (v: boolean) => void;
   setDashboardPanel: (panel: string) => void;
   setShowUserMenu: (v: boolean) => void;
   setShowAuthPopup: (v: boolean) => void;
+  setWallpaper: (url: string | null) => void;
 }
 
 export const useDesktopStore = create<DesktopState>((set) => ({
@@ -22,10 +29,16 @@ export const useDesktopStore = create<DesktopState>((set) => ({
   dashboardPanel: "credits",
   showUserMenu: false,
   showAuthPopup: false,
+  wallpaper: loadWallpaper(),
   setDockPosition: (pos) => set({ dockPosition: pos }),
   setShowAppDrawer: (v) => set({ showAppDrawer: v }),
   setShowDashboard: (v) => set({ showDashboard: v }),
   setDashboardPanel: (panel) => set({ dashboardPanel: panel }),
   setShowUserMenu: (v) => set({ showUserMenu: v }),
   setShowAuthPopup: (v) => set({ showAuthPopup: v }),
+  setWallpaper: (url) => {
+    if (url) localStorage.setItem("desktop_wallpaper", url);
+    else localStorage.removeItem("desktop_wallpaper");
+    set({ wallpaper: url });
+  },
 }));
