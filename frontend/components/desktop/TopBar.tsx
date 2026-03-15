@@ -8,8 +8,12 @@ import { motion, AnimatePresence } from "framer-motion";
 
 type AuthView = "welcome" | "signin" | "register";
 
-const inputCls = "w-full px-3 py-2.5 rounded-xl text-sm outline-none transition-colors";
-const inputStyle = { background: "#0a1510", border: "1px solid #1f2e28", color: "#e8f0ec" };
+const inputCls = "w-full px-4 py-3 rounded-xl text-sm outline-none transition-colors";
+const inputStyle = {
+  background: "rgba(255,255,255,0.06)",
+  border: "1px solid rgba(255,255,255,0.12)",
+  color: "#ffffff",
+};
 
 const GoogleIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24">
@@ -47,58 +51,60 @@ function SignInForm({ onBack, onSwitch }: { onBack: () => void; onSwitch: () => 
   };
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-2 mb-4">
-        <button onClick={onBack} className="text-[#6b8a7a] hover:text-[#e8f0ec] transition-colors">
+    <div className="space-y-4">
+      <div className="flex items-center gap-3 mb-5">
+        <button onClick={onBack} className="transition-colors" style={{ color: "rgba(255,255,255,0.4)" }}
+          onMouseOver={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.9)")}
+          onMouseOut={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.4)")}>
           <BackArrow />
         </button>
-        <h3 className="text-sm font-semibold text-[#e8f0ec]">Sign In</h3>
+        <h3 className="text-sm font-semibold" style={{ color: "#ffffff" }}>Sign In</h3>
       </div>
 
       <a
         href={authApi.googleLoginUrl()}
-        className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium transition-colors"
-        style={{ background: "rgba(31,46,40,0.5)", border: "1px solid #1f2e28", color: "#e8f0ec" }}
-        onMouseOver={(e) => (e.currentTarget.style.background = "rgba(31,46,40,0.8)")}
-        onMouseOut={(e) => (e.currentTarget.style.background = "rgba(31,46,40,0.5)")}
+        className="flex items-center justify-center gap-2.5 w-full py-3 rounded-xl text-sm font-medium transition-all"
+        style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)", color: "#ffffff" }}
+        onMouseOver={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.14)")}
+        onMouseOut={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.08)")}
       >
         <GoogleIcon /> Continue with Google
       </a>
 
-      <div className="flex items-center gap-2 text-[10px] text-[#3d5448]">
-        <div className="flex-1 h-px" style={{ background: "#1f2e28" }} />
+      <div className="flex items-center gap-3 text-[10px]" style={{ color: "rgba(255,255,255,0.3)" }}>
+        <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.1)" }} />
         or
-        <div className="flex-1 h-px" style={{ background: "#1f2e28" }} />
+        <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.1)" }} />
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-2">
+      <form onSubmit={handleSubmit} className="space-y-3">
         <input
           type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required
           className={inputCls} style={inputStyle}
-          onFocus={(e) => (e.currentTarget.style.borderColor = "#00c896")}
-          onBlur={(e) => (e.currentTarget.style.borderColor = "#1f2e28")}
+          onFocus={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.35)")}
+          onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)")}
         />
         <input
           type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required
           className={inputCls} style={inputStyle}
-          onFocus={(e) => (e.currentTarget.style.borderColor = "#00c896")}
-          onBlur={(e) => (e.currentTarget.style.borderColor = "#1f2e28")}
+          onFocus={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.35)")}
+          onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)")}
         />
-        {error && <p className="text-[#e05555] text-xs">{error}</p>}
+        {error && <p className="text-[#ff6b6b] text-xs">{error}</p>}
         <button
           type="submit" disabled={loading}
-          className="w-full py-2.5 rounded-xl text-sm font-semibold disabled:opacity-50 transition-colors"
-          style={{ background: "#00c896", color: "#020805" }}
-          onMouseOver={(e) => !loading && (e.currentTarget.style.background = "#00b585")}
-          onMouseOut={(e) => (e.currentTarget.style.background = "#00c896")}
+          className="w-full py-3 rounded-xl text-sm font-semibold disabled:opacity-50 transition-all"
+          style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.2)", color: "#ffffff" }}
+          onMouseOver={(e) => !loading && (e.currentTarget.style.background = "rgba(255,255,255,0.22)")}
+          onMouseOut={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.15)")}
         >
           {loading ? "Signing in…" : "Sign In"}
         </button>
       </form>
 
-      <p className="text-center text-xs text-[#6b8a7a]">
+      <p className="text-center text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>
         No account?{" "}
-        <button onClick={onSwitch} className="text-[#00c896] hover:underline">Create one</button>
+        <button onClick={onSwitch} className="hover:underline" style={{ color: "rgba(255,255,255,0.8)" }}>Create one</button>
       </p>
     </div>
   );
@@ -127,48 +133,50 @@ function RegisterForm({ onBack, onSwitch }: { onBack: () => void; onSwitch: () =
   };
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-2 mb-4">
-        <button onClick={onBack} className="text-[#6b8a7a] hover:text-[#e8f0ec] transition-colors">
+    <div className="space-y-4">
+      <div className="flex items-center gap-3 mb-5">
+        <button onClick={onBack} className="transition-colors" style={{ color: "rgba(255,255,255,0.4)" }}
+          onMouseOver={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.9)")}
+          onMouseOut={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.4)")}>
           <BackArrow />
         </button>
-        <h3 className="text-sm font-semibold text-[#e8f0ec]">Create Account</h3>
+        <h3 className="text-sm font-semibold" style={{ color: "#ffffff" }}>Create Account</h3>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-2">
+      <form onSubmit={handleSubmit} className="space-y-3">
         <input
           type="text" placeholder="Full Name" value={name} onChange={(e) => setName(e.target.value)} required
           className={inputCls} style={inputStyle}
-          onFocus={(e) => (e.currentTarget.style.borderColor = "#00c896")}
-          onBlur={(e) => (e.currentTarget.style.borderColor = "#1f2e28")}
+          onFocus={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.35)")}
+          onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)")}
         />
         <input
           type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required
           className={inputCls} style={inputStyle}
-          onFocus={(e) => (e.currentTarget.style.borderColor = "#00c896")}
-          onBlur={(e) => (e.currentTarget.style.borderColor = "#1f2e28")}
+          onFocus={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.35)")}
+          onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)")}
         />
         <input
           type="password" placeholder="Password (min 8 chars)" value={password} onChange={(e) => setPassword(e.target.value)} required
           className={inputCls} style={inputStyle}
-          onFocus={(e) => (e.currentTarget.style.borderColor = "#00c896")}
-          onBlur={(e) => (e.currentTarget.style.borderColor = "#1f2e28")}
+          onFocus={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.35)")}
+          onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)")}
         />
-        {error && <p className="text-[#e05555] text-xs">{error}</p>}
+        {error && <p className="text-[#ff6b6b] text-xs">{error}</p>}
         <button
           type="submit" disabled={loading}
-          className="w-full py-2.5 rounded-xl text-sm font-semibold disabled:opacity-50 transition-colors"
-          style={{ background: "#00c896", color: "#020805" }}
-          onMouseOver={(e) => !loading && (e.currentTarget.style.background = "#00b585")}
-          onMouseOut={(e) => (e.currentTarget.style.background = "#00c896")}
+          className="w-full py-3 rounded-xl text-sm font-semibold disabled:opacity-50 transition-all"
+          style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.2)", color: "#ffffff" }}
+          onMouseOver={(e) => !loading && (e.currentTarget.style.background = "rgba(255,255,255,0.22)")}
+          onMouseOut={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.15)")}
         >
           {loading ? "Creating…" : "Create Account"}
         </button>
       </form>
 
-      <p className="text-center text-xs text-[#6b8a7a]">
+      <p className="text-center text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>
         Have an account?{" "}
-        <button onClick={onSwitch} className="text-[#00c896] hover:underline">Sign in</button>
+        <button onClick={onSwitch} className="hover:underline" style={{ color: "rgba(255,255,255,0.8)" }}>Sign in</button>
       </p>
     </div>
   );
@@ -181,7 +189,6 @@ export function TopBar() {
   const menuRef = useRef<HTMLDivElement>(null);
   const [authView, setAuthView] = useState<AuthView>("welcome");
 
-  // Auto-show welcome popup for unauthenticated users
   useEffect(() => {
     if (!isAuthenticated) {
       setShowAuthPopup(true);
@@ -189,7 +196,6 @@ export function TopBar() {
     }
   }, []);
 
-  // Close on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -221,218 +227,223 @@ export function TopBar() {
   const initials = user?.name?.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) || "?";
 
   return (
-    <div
-      className="fixed top-0 left-0 right-0"
-      style={{ zIndex: 200 }}
-    >
+    <div className="fixed top-0 left-0 right-0" style={{ zIndex: 200 }}>
       {/* Search bar + avatar — centered row */}
       <div className="flex justify-center items-center" style={{ paddingTop: 62 }}>
         <div
-          className="flex items-center gap-0 rounded-full overflow-hidden"
+          className="flex items-center rounded-full overflow-hidden"
           style={{
             width: "50%",
             border: "1px solid rgba(255,255,255,0.12)",
-            background: "rgba(255,255,255,0.04)",
-            backdropFilter: "blur(12px)",
+            background: "rgba(255,255,255,0.06)",
+            backdropFilter: "blur(16px)",
           }}
         >
-          {/* Input */}
           <input
             type="text"
             placeholder="Search"
             className="flex-1 bg-transparent outline-none text-sm"
-            style={{ color: "#e8f0ec", height: 38, paddingLeft: 16, paddingRight: 16 }}
+            style={{ color: "#ffffff", height: 40, paddingLeft: 20, paddingRight: 20 }}
           />
         </div>
 
-        {/* Avatar — 2cm (32px) to the right of search bar */}
+        {/* Avatar — 1cm to the right of search bar */}
         <div className="relative shrink-0" ref={menuRef} style={{ marginLeft: 16 }}>
-        <button
-          onClick={handleAvatarClick}
-          className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold overflow-hidden"
-          style={{ background: "#1a2820", border: "2px solid #1f2e28", color: "#6b8a7a" }}
-        >
-          {isAuthenticated && user?.avatar_url ? (
-            <img src={user.avatar_url} alt="" className="w-full h-full object-cover" />
-          ) : isAuthenticated ? (
-            <span style={{ color: "#00c896" }}>{initials}</span>
-          ) : (
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-              <circle cx="12" cy="7" r="4" />
-            </svg>
-          )}
-        </button>
+          <button
+            onClick={handleAvatarClick}
+            className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold overflow-hidden transition-all"
+            style={{
+              background: "rgba(255,255,255,0.08)",
+              border: "1px solid rgba(255,255,255,0.15)",
+              color: "rgba(255,255,255,0.7)",
+            }}
+            onMouseOver={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.14)")}
+            onMouseOut={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.08)")}
+          >
+            {isAuthenticated && user?.avatar_url ? (
+              <img src={user.avatar_url} alt="" className="w-full h-full object-cover" />
+            ) : isAuthenticated ? (
+              <span style={{ color: "#ffffff" }}>{initials}</span>
+            ) : (
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+            )}
+          </button>
 
-        <AnimatePresence mode="wait">
-          {/* ── Auth popup (unauthenticated) ── */}
-          {!isAuthenticated && showAuthPopup && (
-            <motion.div
-              key="auth-popup"
-              initial={{ opacity: 0, scale: 0.95, y: -6 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: -6 }}
-              transition={{ duration: 0.15 }}
-              className="absolute right-0 top-12 w-72 rounded-2xl p-5"
-              style={{
-                background: "rgba(13,24,20,0.97)",
-                backdropFilter: "blur(24px)",
-                border: "1px solid rgba(31,46,40,0.9)",
-                boxShadow: "0 24px 64px rgba(0,0,0,0.7)",
-                zIndex: 400,
-              }}
-            >
-              <AnimatePresence mode="wait">
-                {authView === "welcome" && (
-                  <motion.div
-                    key="welcome"
-                    initial={{ opacity: 0, x: 10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -10 }}
-                    transition={{ duration: 0.12 }}
-                    className="space-y-2.5"
-                  >
-                    <h3 className="text-base font-semibold text-[#e8f0ec] mb-1">Welcome to Infinity</h3>
-                    <p className="text-xs text-[#6b8a7a] mb-4">Sign in to sync your workspace across devices</p>
-
-                    <button
-                      onClick={() => setAuthView("signin")}
-                      className="block w-full py-2.5 rounded-xl text-sm font-semibold text-center transition-colors"
-                      style={{ background: "#0d1f19", border: "1px solid #1f2e28", color: "#e8f0ec" }}
-                      onMouseOver={(e) => (e.currentTarget.style.background = "#132b1f")}
-                      onMouseOut={(e) => (e.currentTarget.style.background = "#0d1f19")}
+          <AnimatePresence mode="wait">
+            {/* ── Auth popup (unauthenticated) ── */}
+            {!isAuthenticated && showAuthPopup && (
+              <motion.div
+                key="auth-popup"
+                initial={{ opacity: 0, scale: 0.95, y: -6 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: -6 }}
+                transition={{ duration: 0.15 }}
+                className="absolute right-0 top-12 w-72 rounded-2xl p-6"
+                style={{
+                  background: "rgba(10,10,10,0.72)",
+                  backdropFilter: "blur(32px)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  boxShadow: "0 24px 64px rgba(0,0,0,0.5)",
+                  zIndex: 400,
+                }}
+              >
+                <AnimatePresence mode="wait">
+                  {authView === "welcome" && (
+                    <motion.div
+                      key="welcome"
+                      initial={{ opacity: 0, x: 10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -10 }}
+                      transition={{ duration: 0.12 }}
+                      className="flex flex-col gap-3"
                     >
-                      Sign In
-                    </button>
+                      <div style={{ marginBottom: 6 }}>
+                        <h3 className="text-base font-semibold" style={{ color: "#ffffff", marginBottom: 5 }}>Welcome to Infinity</h3>
+                        <p className="text-xs" style={{ color: "rgba(255,255,255,0.45)" }}>Sign in to sync your workspace across devices</p>
+                      </div>
 
-                    <button
-                      onClick={() => setAuthView("register")}
-                      className="block w-full py-2.5 rounded-xl text-sm font-semibold text-center transition-colors"
-                      style={{ background: "rgba(31,46,40,0.45)", border: "1px solid #1f2e28", color: "#e8f0ec" }}
-                      onMouseOver={(e) => (e.currentTarget.style.background = "rgba(31,46,40,0.7)")}
-                      onMouseOut={(e) => (e.currentTarget.style.background = "rgba(31,46,40,0.45)")}
+                      <button
+                        onClick={() => setAuthView("signin")}
+                        className="block w-full rounded-xl text-sm font-semibold text-center transition-all"
+                        style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.14)", color: "#ffffff", padding: "12px 16px" }}
+                        onMouseOver={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.16)")}
+                        onMouseOut={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.1)")}
+                      >
+                        Sign In
+                      </button>
+
+                      <button
+                        onClick={() => setAuthView("register")}
+                        className="block w-full rounded-xl text-sm font-semibold text-center transition-all"
+                        style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)", padding: "12px 16px" }}
+                        onMouseOver={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.11)")}
+                        onMouseOut={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.06)")}
+                      >
+                        Create Account
+                      </button>
+
+                      <div className="flex items-center gap-3 text-[10px]" style={{ color: "rgba(255,255,255,0.3)", margin: "2px 0" }}>
+                        <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.1)" }} />
+                        or continue with
+                        <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.1)" }} />
+                      </div>
+
+                      <a
+                        href={authApi.googleLoginUrl()}
+                        className="flex items-center justify-center gap-2.5 w-full rounded-xl text-sm font-medium transition-all"
+                        style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "#ffffff", padding: "12px 16px" }}
+                        onMouseOver={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.11)")}
+                        onMouseOut={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.06)")}
+                      >
+                        <GoogleIcon /> Google
+                      </a>
+                    </motion.div>
+                  )}
+
+                  {authView === "signin" && (
+                    <motion.div
+                      key="signin"
+                      initial={{ opacity: 0, x: 10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -10 }}
+                      transition={{ duration: 0.12 }}
                     >
-                      Create Account
-                    </button>
+                      <SignInForm
+                        onBack={() => setAuthView("welcome")}
+                        onSwitch={() => setAuthView("register")}
+                      />
+                    </motion.div>
+                  )}
 
-                    <div className="flex items-center gap-2 text-[10px] text-[#3d5448] py-0.5">
-                      <div className="flex-1 h-px" style={{ background: "#1f2e28" }} />
-                      or continue with
-                      <div className="flex-1 h-px" style={{ background: "#1f2e28" }} />
-                    </div>
-
-                    <a
-                      href={authApi.googleLoginUrl()}
-                      className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium transition-colors"
-                      style={{ background: "rgba(31,46,40,0.45)", border: "1px solid #1f2e28", color: "#e8f0ec" }}
-                      onMouseOver={(e) => (e.currentTarget.style.background = "rgba(31,46,40,0.7)")}
-                      onMouseOut={(e) => (e.currentTarget.style.background = "rgba(31,46,40,0.45)")}
+                  {authView === "register" && (
+                    <motion.div
+                      key="register"
+                      initial={{ opacity: 0, x: 10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -10 }}
+                      transition={{ duration: 0.12 }}
                     >
-                      <GoogleIcon /> Google
-                    </a>
-                  </motion.div>
-                )}
+                      <RegisterForm
+                        onBack={() => setAuthView("welcome")}
+                        onSwitch={() => setAuthView("signin")}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            )}
 
-                {authView === "signin" && (
-                  <motion.div
-                    key="signin"
-                    initial={{ opacity: 0, x: 10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -10 }}
-                    transition={{ duration: 0.12 }}
+            {/* ── User menu (authenticated) ── */}
+            {isAuthenticated && showUserMenu && (
+              <motion.div
+                key="user-menu"
+                initial={{ opacity: 0, scale: 0.95, y: -6 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: -6 }}
+                transition={{ duration: 0.15 }}
+                className="absolute right-0 top-12 w-56 rounded-2xl overflow-hidden"
+                style={{
+                  background: "rgba(10,10,10,0.72)",
+                  backdropFilter: "blur(32px)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  boxShadow: "0 24px 64px rgba(0,0,0,0.5)",
+                  zIndex: 400,
+                }}
+              >
+                <div className="px-5 py-4 flex items-center gap-3">
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold overflow-hidden shrink-0"
+                    style={{ background: "rgba(255,255,255,0.1)", color: "#ffffff" }}
                   >
-                    <SignInForm
-                      onBack={() => setAuthView("welcome")}
-                      onSwitch={() => setAuthView("register")}
-                    />
-                  </motion.div>
-                )}
+                    {user?.avatar_url ? (
+                      <img src={user.avatar_url} alt="" className="w-full h-full object-cover" />
+                    ) : initials}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium truncate" style={{ color: "#ffffff" }}>{user?.name}</p>
+                    <p className="text-xs truncate" style={{ color: "rgba(255,255,255,0.45)" }}>@{user?.email?.split("@")[0]}</p>
+                  </div>
+                </div>
 
-                {authView === "register" && (
-                  <motion.div
-                    key="register"
-                    initial={{ opacity: 0, x: 10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -10 }}
-                    transition={{ duration: 0.12 }}
-                  >
-                    <RegisterForm
-                      onBack={() => setAuthView("welcome")}
-                      onSwitch={() => setAuthView("signin")}
-                    />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          )}
+                <div className="h-px mx-4" style={{ background: "rgba(255,255,255,0.08)" }} />
 
-          {/* ── User menu (authenticated) ── */}
-          {isAuthenticated && showUserMenu && (
-            <motion.div
-              key="user-menu"
-              initial={{ opacity: 0, scale: 0.95, y: -6 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: -6 }}
-              transition={{ duration: 0.15 }}
-              className="absolute right-0 top-12 w-56 rounded-2xl overflow-hidden"
-              style={{
-                background: "rgba(13,24,20,0.97)",
-                backdropFilter: "blur(24px)",
-                border: "1px solid #1f2e28",
-                boxShadow: "0 24px 64px rgba(0,0,0,0.7)",
-                zIndex: 400,
-              }}
-            >
-              <div className="px-4 py-3 flex items-center gap-3">
-                <div
-                  className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold overflow-hidden shrink-0"
-                  style={{ background: "#1a2820", color: "#00c896" }}
+                <button
+                  onClick={openDashboard}
+                  className="w-full flex items-center gap-3 px-5 py-3 text-sm text-left transition-colors"
+                  style={{ color: "rgba(255,255,255,0.85)" }}
+                  onMouseOver={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.07)")}
+                  onMouseOut={(e) => (e.currentTarget.style.background = "transparent")}
                 >
-                  {user?.avatar_url ? (
-                    <img src={user.avatar_url} alt="" className="w-full h-full object-cover" />
-                  ) : initials}
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-medium text-[#e8f0ec] truncate">{user?.name}</p>
-                  <p className="text-xs text-[#6b8a7a] truncate">@{user?.email?.split("@")[0]}</p>
-                </div>
-              </div>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="3" />
+                    <path d="M19.07 4.93a10 10 0 0 0-14.14 0M4.93 19.07a10 10 0 0 0 14.14 0M21.73 12H19M5 12H2.27M12 2.27V5M12 19v2.73" />
+                  </svg>
+                  Dashboard
+                </button>
 
-              <div className="h-px mx-3" style={{ background: "#1f2e28" }} />
+                <div className="h-px mx-4" style={{ background: "rgba(255,255,255,0.08)" }} />
 
-              <button
-                onClick={openDashboard}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-[#e8f0ec] text-left"
-                onMouseOver={(e) => (e.currentTarget.style.background = "#1a2820")}
-                onMouseOut={(e) => (e.currentTarget.style.background = "transparent")}
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="3" />
-                  <path d="M19.07 4.93a10 10 0 0 0-14.14 0M4.93 19.07a10 10 0 0 0 14.14 0M21.73 12H19M5 12H2.27M12 2.27V5M12 19v2.73" />
-                </svg>
-                Dashboard
-              </button>
-
-              <div className="h-px mx-3" style={{ background: "#1f2e28" }} />
-
-              <button
-                onClick={logout}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left"
-                style={{ color: "#e05555" }}
-                onMouseOver={(e) => (e.currentTarget.style.background = "#1a2820")}
-                onMouseOut={(e) => (e.currentTarget.style.background = "transparent")}
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                  <polyline points="16 17 21 12 16 7" />
-                  <line x1="21" y1="12" x2="9" y2="12" />
-                </svg>
-                Sign Out
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+                <button
+                  onClick={logout}
+                  className="w-full flex items-center gap-3 px-5 py-3 text-sm text-left transition-colors"
+                  style={{ color: "rgba(255,100,100,0.9)" }}
+                  onMouseOver={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.07)")}
+                  onMouseOut={(e) => (e.currentTarget.style.background = "transparent")}
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" y1="12" x2="9" y2="12" />
+                  </svg>
+                  Sign Out
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );

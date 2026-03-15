@@ -60,34 +60,34 @@ export function AppDrawer() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 flex flex-col items-center pt-16 pb-24"
-      style={{ background: "rgba(10, 15, 13, 0.96)", backdropFilter: "blur(20px)", zIndex: 300 }}
+      className="fixed inset-0 flex flex-col items-center pt-20 pb-24"
+      style={{ background: "rgba(0,0,0,0.65)", backdropFilter: "blur(24px)", zIndex: 300 }}
       onClick={() => setShowAppDrawer(false)}
     >
-      <div onClick={(e) => e.stopPropagation()} className="w-full max-w-3xl">
+      <div onClick={(e) => e.stopPropagation()} className="w-full max-w-3xl px-4">
         <input
           type="text"
           autoFocus
           placeholder="Search apps..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full px-5 py-3 rounded-2xl text-base outline-none mb-6"
-          style={{ background: "#111a16", border: "1px solid #1f2e28", color: "#e8f0ec" }}
-          onFocus={(e) => (e.currentTarget.style.borderColor = "#00c896")}
-          onBlur={(e) => (e.currentTarget.style.borderColor = "#1f2e28")}
+          className="w-full px-5 py-3.5 rounded-2xl text-base outline-none mb-6"
+          style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)", color: "#ffffff" }}
+          onFocus={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.35)")}
+          onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)")}
         />
 
         {/* Category tabs */}
-        <div className="flex gap-2 mb-6">
+        <div className="flex gap-2 mb-8">
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
               onClick={() => setCategory(cat)}
-              className="px-4 py-1.5 rounded-full text-sm capitalize transition-colors"
+              className="px-4 py-1.5 rounded-full text-sm capitalize transition-all"
               style={{
-                background: category === cat ? "#00c896" : "#111a16",
-                color: category === cat ? "#020805" : "#6b8a7a",
-                border: `1px solid ${category === cat ? "#00c896" : "#1f2e28"}`,
+                background: category === cat ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.06)",
+                color: category === cat ? "#ffffff" : "rgba(255,255,255,0.5)",
+                border: `1px solid ${category === cat ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.1)"}`,
               }}
             >
               {cat}
@@ -103,10 +103,10 @@ export function AppDrawer() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => launchApp(app)}
-              className="flex flex-col items-center gap-2 p-4 rounded-2xl transition-colors"
-              style={{ background: "#111a16", border: "1px solid #1f2e28" }}
-              onMouseOver={(e) => (e.currentTarget.style.background = "#1a2820")}
-              onMouseOut={(e) => (e.currentTarget.style.background = "#111a16")}
+              className="flex flex-col items-center gap-2.5 p-4 rounded-2xl transition-all"
+              style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }}
+              onMouseOver={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.11)")}
+              onMouseOut={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.06)")}
             >
               <div
                 className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl"
@@ -114,16 +114,16 @@ export function AppDrawer() {
               >
                 {getAppIcon(app.id)}
               </div>
-              <span className="text-xs text-[#e8f0ec] text-center leading-tight">{app.name}</span>
+              <span className="text-xs text-center leading-tight" style={{ color: "rgba(255,255,255,0.9)" }}>{app.name}</span>
               <div className="flex gap-1 flex-wrap justify-center">
-                <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: "#1f2e28", color: "#6b8a7a" }}>
+                <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.5)" }}>
                   {app.cpu_cores}C
                 </span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: "#1f2e28", color: "#6b8a7a" }}>
+                <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.5)" }}>
                   {app.memory_gb}GB
                 </span>
                 {app.gpu_required && (
-                  <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: "#00c89622", color: "#00c896" }}>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: "rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.8)" }}>
                     GPU
                   </span>
                 )}
@@ -132,7 +132,7 @@ export function AppDrawer() {
           ))}
 
           {filtered.length === 0 && (
-            <div className="col-span-6 text-center py-12 text-[#3d5448]">No apps found</div>
+            <div className="col-span-6 text-center py-12" style={{ color: "rgba(255,255,255,0.3)" }}>No apps found</div>
           )}
         </div>
       </div>

@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useCallback } from "react";
+import { AnimatePresence } from "framer-motion";
 import { useDesktopStore } from "@/store/desktopStore";
 import { useWindowStore } from "@/store/windowStore";
 import { TopBar } from "./TopBar";
@@ -61,8 +62,8 @@ export function Desktop() {
       <TopBar />
       <WindowManager />
       <Dock />
-      {showAppDrawer && <AppDrawer />}
-      {showDashboard && <Dashboard />}
+      <AnimatePresence>{showAppDrawer && <AppDrawer />}</AnimatePresence>
+      <AnimatePresence>{showDashboard && <Dashboard />}</AnimatePresence>
     </div>
   );
 }
