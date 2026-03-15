@@ -1,0 +1,48 @@
+apps:
+  - id: vscode
+    name: VS Code
+    description: Visual Studio Code browser-based IDE
+    image: infinityos/vscode:latest
+    cpu_cores: 2
+    memory_gb: 4
+    gpu_required: false
+    gpu_optional: false
+    idle_minutes: 30
+    warm_pool_size: 2
+    category: development
+
+  - id: ubuntu-desktop
+    name: Ubuntu Desktop
+    description: Full Ubuntu 22.04 desktop environment
+    image: infinityos/ubuntu:latest
+    cpu_cores: 2
+    memory_gb: 4
+    gpu_required: false
+    gpu_optional: false
+    idle_minutes: 20
+    warm_pool_size: 1
+    category: desktop
+
+  - id: blender
+    name: Blender
+    description: 3D creation suite for modeling, animation, rendering
+    image: infinityos/blender:latest
+    cpu_cores: 4
+    memory_gb: 8
+    gpu_required: false
+    gpu_optional: true
+    idle_minutes: 15
+    warm_pool_size: 0
+    category: creative
+
+  - id: gazebo
+    name: Gazebo Sim
+    description: Robot simulation environment
+    image: infinityos/gazebo:latest
+    cpu_cores: 4
+    memory_gb: 8
+    gpu_required: false
+    gpu_optional: true
+    idle_minutes: 15
+    warm_pool_size: 0
+    category: robotics

@@ -1,0 +1,21 @@
+server:
+  port: 8080
+  environment: development
+
+database:
+  url: "postgres://infinityos:infinityos@localhost:5432/infinityos"
+
+redis:
+  url: "redis://localhost:6379"
+
+auth:
+  jwt_expiry_hours: 24
+  refresh_token_expiry_days: 30
+
+app:
+  orchestrator: docker
+  gpu_enabled: false
+  frontend_url: "http://localhost:3000"
+
+warmpool:
+  enabled: true

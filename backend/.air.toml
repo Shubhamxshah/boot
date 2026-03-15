@@ -1,0 +1,15 @@
+[build]
+  cmd = "/usr/local/go/bin/go build -o ./tmp/main ./cmd/server"
+  bin = "./tmp/main"
+  delay = 1000
+  exclude_dir = ["tmp", "vendor", "db/generated"]
+  include_ext = ["go", "yaml", "env"]
+  kill_delay = "2s"
+  rerun = false
+
+[log]
+  time = false
+
+[color]
+  build = "yellow"
+  runner = "green"
