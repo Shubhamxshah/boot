@@ -3,6 +3,7 @@ import { useEffect, useCallback } from "react";
 import { AnimatePresence } from "framer-motion";
 import { useDesktopStore } from "@/store/desktopStore";
 import { useWindowStore } from "@/store/windowStore";
+import { useAuthStore } from "@/store/authStore";
 import { TopBar } from "./TopBar";
 import { Dock } from "./Dock";
 import { WindowManager } from "./WindowManager";
@@ -12,6 +13,7 @@ import { Dashboard } from "../dashboard/Dashboard";
 export function Desktop() {
   const { showAppDrawer, setShowAppDrawer, setShowDashboard, showDashboard, wallpaper } = useDesktopStore();
   const { focusedWindowId, minimizeWindow, maximizeWindow, closeWindow } = useWindowStore();
+  const { isAuthenticated } = useAuthStore();
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.ctrlKey && e.altKey) {
@@ -61,7 +63,7 @@ export function Desktop() {
     >
       <TopBar />
       <WindowManager />
-      <Dock />
+      {isAuthenticated && <Dock />}
       <AnimatePresence>{showAppDrawer && <AppDrawer />}</AnimatePresence>
       <AnimatePresence>{showDashboard && <Dashboard />}</AnimatePresence>
     </div>

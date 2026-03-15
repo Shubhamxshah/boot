@@ -3,6 +3,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useDesktopStore } from "@/store/desktopStore";
 import { useWindowStore } from "@/store/windowStore";
+import { useAuthStore } from "@/store/authStore";
 import { sessionsApi } from "@/lib/api/sessions";
 import { useQuery } from "@tanstack/react-query";
 import { appsApi } from "@/lib/api/apps";

@@ -94,56 +94,55 @@ export function AppearancePanel() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
-        <h3 className="text-lg font-semibold text-[#e8f0ec] mb-1">Appearance</h3>
-        <p className="text-sm text-[#6b8a7a]">Customize your desktop wallpaper</p>
+        <h3 className="text-xl font-semibold mb-2" style={{ color: "rgba(255,255,255,0.9)" }}>Appearance</h3>
+        <p className="text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>Customize your desktop wallpaper</p>
       </div>
 
       {/* Current wallpaper preview */}
       <div>
-        <p className="text-xs text-[#6b8a7a] mb-2 uppercase tracking-wide">Preview</p>
+        <p className="text-xs mb-3 font-medium uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.28)" }}>Preview</p>
         <div
-          className="w-full rounded-xl overflow-hidden relative"
-          style={{ height: 160, ...currentPreviewStyle(preview) }}
+          className="w-full rounded-2xl overflow-hidden relative"
+          style={{ height: 180, ...currentPreviewStyle(preview) }}
         >
-          {/* Simulated topbar overlay */}
           <div
             className="absolute top-0 left-0 right-0 flex items-center px-3 gap-2"
             style={{ height: 32, background: "rgba(10,15,13,0.6)", backdropFilter: "blur(12px)" }}
           >
-            <div className="w-5 h-5 rounded-md" style={{ background: "#0d1f19" }} />
-            <div className="flex-1 h-4 rounded-full" style={{ background: "rgba(13,24,20,0.7)", border: "1px solid rgba(31,46,40,0.6)" }} />
-            <div className="w-5 h-5 rounded-full" style={{ background: "#1a2820" }} />
+            <div className="w-5 h-5 rounded-md" style={{ background: "rgba(255,255,255,0.08)" }} />
+            <div className="flex-1 h-4 rounded-full" style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)" }} />
+            <div className="w-5 h-5 rounded-full" style={{ background: "rgba(255,255,255,0.1)" }} />
           </div>
         </div>
       </div>
 
       {/* Upload */}
       <div>
-        <p className="text-xs text-[#6b8a7a] mb-2 uppercase tracking-wide">Custom Image</p>
+        <p className="text-xs mb-3 font-medium uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.28)" }}>Custom Image</p>
         <div
-          className="relative flex flex-col items-center justify-center gap-2 rounded-xl cursor-pointer transition-colors"
+          className="relative flex flex-col items-center justify-center gap-3 rounded-2xl cursor-pointer transition-colors"
           style={{
-            height: 100,
-            border: `2px dashed ${dragging ? "#00c896" : "#1f2e28"}`,
-            background: dragging ? "rgba(0,200,150,0.05)" : "#0a1510",
+            height: 120,
+            border: `2px dashed ${dragging ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.1)"}`,
+            background: dragging ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.02)",
           }}
           onClick={() => fileRef.current?.click()}
           onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
           onDragLeave={() => setDragging(false)}
           onDrop={handleDrop}
         >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3d5448" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <rect x="3" y="3" width="18" height="18" rx="2" />
             <circle cx="8.5" cy="8.5" r="1.5" />
             <path d="m21 15-5-5L5 21" />
           </svg>
-          <p className="text-xs text-[#3d5448]">
+          <p className="text-xs" style={{ color: "rgba(255,255,255,0.3)" }}>
             {isCustomImage(preview) ? "Replace image" : "Drop image or click to upload"}
           </p>
           {isCustomImage(preview) && (
-            <p className="text-[10px] text-[#00c896]">Custom image active</p>
+            <p className="text-[10px]" style={{ color: "rgba(255,255,255,0.5)" }}>Custom image active</p>
           )}
           <input
             ref={fileRef}
@@ -157,8 +156,8 @@ export function AppearancePanel() {
 
       {/* Preset gradients */}
       <div>
-        <p className="text-xs text-[#6b8a7a] mb-3 uppercase tracking-wide">Presets</p>
-        <div className="grid grid-cols-3 gap-3">
+        <p className="text-xs mb-4 font-medium uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.28)" }}>Presets</p>
+        <div className="grid grid-cols-3 gap-4">
           {PRESETS.map((p) => {
             const active = preview === p.value || (p.value === null && !preview);
             return (
@@ -167,22 +166,22 @@ export function AppearancePanel() {
                 onClick={() => selectPreset(p.value)}
                 className="relative rounded-xl overflow-hidden transition-all"
                 style={{
-                  height: 72,
+                  height: 88,
                   background: p.preview,
-                  outline: active ? "2px solid #00c896" : "2px solid transparent",
-                  outlineOffset: 2,
+                  outline: active ? "2px solid rgba(255,255,255,0.5)" : "2px solid transparent",
+                  outlineOffset: 3,
                 }}
               >
                 <div
-                  className="absolute bottom-0 left-0 right-0 flex items-center justify-center py-1.5"
+                  className="absolute bottom-0 left-0 right-0 flex items-center justify-center py-2"
                   style={{ background: "rgba(0,0,0,0.45)" }}
                 >
-                  <span className="text-xs text-[#e8f0ec] font-medium">{p.label}</span>
+                  <span className="text-xs font-medium" style={{ color: "rgba(255,255,255,0.9)" }}>{p.label}</span>
                 </div>
                 {active && (
-                  <div className="absolute top-2 right-2 w-4 h-4 rounded-full flex items-center justify-center" style={{ background: "#00c896" }}>
-                    <svg width="8" height="8" viewBox="0 0 10 10" fill="none">
-                      <path d="M2 5l2.5 2.5L8 3" stroke="#020805" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <div className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full flex items-center justify-center" style={{ background: "rgba(255,255,255,0.85)" }}>
+                    <svg width="9" height="9" viewBox="0 0 10 10" fill="none">
+                      <path d="M2 5l2.5 2.5L8 3" stroke="#111" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </div>
                 )}
@@ -196,10 +195,10 @@ export function AppearancePanel() {
       {isCustomImage(preview) && (
         <button
           onClick={clearWallpaper}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm transition-colors"
-          style={{ background: "#111a16", border: "1px solid #1f2e28", color: "#e05555" }}
-          onMouseOver={(e) => (e.currentTarget.style.background = "#1a2820")}
-          onMouseOut={(e) => (e.currentTarget.style.background = "#111a16")}
+          className="flex items-center gap-2 rounded-xl text-sm transition-colors"
+          style={{ background: "rgba(255,80,80,0.08)", border: "1px solid rgba(255,80,80,0.15)", color: "rgba(255,120,120,0.9)", padding: "10px 18px" }}
+          onMouseOver={(e) => (e.currentTarget.style.background = "rgba(255,80,80,0.15)")}
+          onMouseOut={(e) => (e.currentTarget.style.background = "rgba(255,80,80,0.08)")}
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M3 6h18M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2" />

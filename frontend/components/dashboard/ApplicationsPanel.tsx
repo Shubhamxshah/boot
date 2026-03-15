@@ -13,58 +13,58 @@ function AppRow({ app }: { app: App }) {
   const [idleMinutes, setIdleMinutes] = useState(app.idle_minutes);
 
   return (
-    <div style={{ background: "#111a16", border: "1px solid #1f2e28", borderRadius: 12 }}>
+    <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 14 }}>
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center gap-3 p-4 text-left"
-        onMouseOver={(e) => (e.currentTarget.style.background = "#1a2820")}
+        className="w-full flex items-center gap-4 text-left transition-colors"
+        style={{ padding: "18px 20px", borderRadius: 14 }}
+        onMouseOver={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.05)")}
         onMouseOut={(e) => (e.currentTarget.style.background = "transparent")}
-        style={{ borderRadius: 12 }}
       >
         <div
-          className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0"
+          className="w-11 h-11 rounded-xl flex items-center justify-center text-xl shrink-0"
           style={{ background: `${getAppColor(app.id)}22` }}
         >
           {getAppIcon(app.id)}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-[#e8f0ec]">{app.name}</p>
-          <div className="flex gap-2 mt-0.5">
-            <span className="text-xs text-[#6b8a7a]">{app.cpu_cores} CPU</span>
-            <span className="text-xs text-[#6b8a7a]">{app.memory_gb}GB RAM</span>
+          <p className="text-sm font-semibold" style={{ color: "rgba(255,255,255,0.85)" }}>{app.name}</p>
+          <div className="flex gap-2 mt-1">
+            <span className="text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>{app.cpu_cores} CPU</span>
+            <span className="text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>{app.memory_gb}GB RAM</span>
             {(app.gpu_required || app.gpu_optional) && (
-              <span className="text-xs" style={{ color: "#00c896" }}>GPU</span>
+              <span className="text-xs" style={{ color: "rgba(255,255,255,0.55)" }}>GPU</span>
             )}
           </div>
         </div>
-        <span className="text-[#6b8a7a] text-sm">{expanded ? "▲" : "▼"}</span>
+        <span className="text-sm" style={{ color: "rgba(255,255,255,0.3)" }}>{expanded ? "▲" : "▼"}</span>
       </button>
 
       {expanded && (
-        <div className="px-4 pb-4 space-y-4" style={{ borderTop: "1px solid #1f2e28" }}>
-          <div className="pt-4 space-y-4">
+        <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)", padding: "22px 22px" }}>
+          <div className="space-y-6">
             {/* CPU cores */}
             <div className="flex items-center justify-between">
-              <label className="text-sm text-[#6b8a7a]">CPU Cores</label>
+              <label className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>CPU Cores</label>
               <div className="flex items-center gap-2">
                 <button onClick={() => setCpuCores(Math.max(1, cpuCores - 1))}
                   className="w-7 h-7 rounded-lg flex items-center justify-center text-sm"
-                  style={{ background: "#1f2e28", color: "#e8f0ec" }}>−</button>
-                <span className="text-sm text-[#e8f0ec] w-6 text-center">{cpuCores}</span>
+                  style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.8)" }}>−</button>
+                <span className="text-sm w-6 text-center" style={{ color: "rgba(255,255,255,0.8)" }}>{cpuCores}</span>
                 <button onClick={() => setCpuCores(Math.min(16, cpuCores + 1))}
                   className="w-7 h-7 rounded-lg flex items-center justify-center text-sm"
-                  style={{ background: "#1f2e28", color: "#e8f0ec" }}>+</button>
+                  style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.8)" }}>+</button>
               </div>
             </div>
 
             {/* Memory */}
             <div className="flex items-center justify-between">
-              <label className="text-sm text-[#6b8a7a]">Memory</label>
+              <label className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>Memory</label>
               <select
                 value={memoryGb}
                 onChange={(e) => setMemoryGb(Number(e.target.value))}
                 className="text-sm rounded-lg px-3 py-1.5 outline-none"
-                style={{ background: "#1f2e28", color: "#e8f0ec", border: "none" }}
+                style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.8)", border: "none" }}
               >
                 {[1, 2, 4, 8, 16, 32].map((v) => (
                   <option key={v} value={v}>{v}GB</option>
@@ -75,18 +75,15 @@ function AppRow({ app }: { app: App }) {
             {/* GPU */}
             {(app.gpu_required || app.gpu_optional) && (
               <div className="flex items-center justify-between">
-                <label className="text-sm text-[#6b8a7a]">GPU Acceleration</label>
+                <label className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>GPU Acceleration</label>
                 <button
                   onClick={() => setGpuEnabled(!gpuEnabled)}
                   className="w-11 h-6 rounded-full transition-colors relative"
-                  style={{ background: gpuEnabled ? "#00c896" : "#1f2e28" }}
+                  style={{ background: gpuEnabled ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.1)" }}
                 >
                   <div
                     className="absolute top-0.5 w-5 h-5 rounded-full transition-all"
-                    style={{
-                      background: "#e8f0ec",
-                      left: gpuEnabled ? "calc(100% - 22px)" : "2px",
-                    }}
+                    style={{ background: "rgba(255,255,255,0.9)", left: gpuEnabled ? "calc(100% - 22px)" : "2px" }}
                   />
                 </button>
               </div>
@@ -94,15 +91,15 @@ function AppRow({ app }: { app: App }) {
 
             {/* Auto-stop */}
             <div className="flex items-center justify-between">
-              <label className="text-sm text-[#6b8a7a]">Auto-stop (idle min)</label>
+              <label className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>Auto-stop (idle min)</label>
               <div className="flex items-center gap-2">
                 <button onClick={() => setIdleMinutes(Math.max(2, idleMinutes - 1))}
                   className="w-7 h-7 rounded-lg flex items-center justify-center text-sm"
-                  style={{ background: "#1f2e28", color: "#e8f0ec" }}>−</button>
-                <span className="text-sm text-[#e8f0ec] w-8 text-center">{idleMinutes}</span>
+                  style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.8)" }}>−</button>
+                <span className="text-sm w-8 text-center" style={{ color: "rgba(255,255,255,0.8)" }}>{idleMinutes}</span>
                 <button onClick={() => setIdleMinutes(Math.min(1440, idleMinutes + 1))}
                   className="w-7 h-7 rounded-lg flex items-center justify-center text-sm"
-                  style={{ background: "#1f2e28", color: "#e8f0ec" }}>+</button>
+                  style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.8)" }}>+</button>
               </div>
             </div>
           </div>
@@ -119,18 +116,18 @@ export function ApplicationsPanel() {
   });
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold text-[#e8f0ec] mb-1">Applications</h3>
-        <p className="text-sm text-[#6b8a7a]">Configure default settings per app</p>
+        <h3 className="text-xl font-semibold mb-2" style={{ color: "rgba(255,255,255,0.9)" }}>Applications</h3>
+        <p className="text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>Configure default settings per app</p>
       </div>
 
       {isLoading ? (
         <div className="flex justify-center py-8">
-          <div className="w-6 h-6 border-2 border-[#00c896] border-t-transparent rounded-full animate-spin" />
+          <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: "rgba(255,255,255,0.3)", borderTopColor: "transparent" }} />
         </div>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-3.5">
           {data?.apps.map((app) => <AppRow key={app.id} app={app} />)}
         </div>
       )}

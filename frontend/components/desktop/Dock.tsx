@@ -109,13 +109,13 @@ export function Dock() {
 
   return (
     <div
-      className="fixed bottom-4 left-1/2 -translate-x-1/2 flex items-end gap-3"
+      className="fixed bottom-4 left-1/2 -translate-x-1/2 flex items-end gap-4"
       style={{
         background: "rgba(255,255,255,0.06)",
         backdropFilter: "blur(16px)",
         border: "1px solid rgba(255,255,255,0.12)",
-        borderRadius: 24,
-        padding: "10px 14px",
+        borderRadius: 28,
+        padding: "12px 20px",
         zIndex: 200,
       }}
     >

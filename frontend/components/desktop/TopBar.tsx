@@ -227,7 +227,7 @@ export function TopBar() {
   const initials = user?.name?.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) || "?";
 
   return (
-    <div className="fixed top-0 left-0 right-0" style={{ zIndex: 200 }}>
+    <div className="fixed top-0 left-0 right-0 z-200">
       {/* Search bar + avatar — centered row */}
       <div className="flex justify-center items-center" style={{ paddingTop: 62 }}>
         <div
@@ -248,7 +248,7 @@ export function TopBar() {
         </div>
 
         {/* Avatar — 1cm to the right of search bar */}
-        <div className="relative shrink-0" ref={menuRef} style={{ marginLeft: 16 }}>
+        <div className="relative shrink-0 " ref={menuRef} style={{ marginLeft: 16 }}>
           <button
             onClick={handleAvatarClick}
             className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold overflow-hidden transition-all"
@@ -281,13 +281,14 @@ export function TopBar() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: -6 }}
                 transition={{ duration: 0.15 }}
-                className="absolute right-0 top-12 w-72 rounded-2xl p-6"
+                className="absolute right-0 top-12 w-80 rounded-2xl"
                 style={{
                   background: "rgba(10,10,10,0.72)",
                   backdropFilter: "blur(32px)",
                   border: "1px solid rgba(255,255,255,0.1)",
                   boxShadow: "0 24px 64px rgba(0,0,0,0.5)",
                   zIndex: 400,
+                  padding: "28px 28px",
                 }}
               >
                 <AnimatePresence mode="wait">
@@ -298,17 +299,17 @@ export function TopBar() {
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -10 }}
                       transition={{ duration: 0.12 }}
-                      className="flex flex-col gap-3"
+                      className="flex flex-col gap-4"
                     >
-                      <div style={{ marginBottom: 6 }}>
+                      <div className="mb-6">
                         <h3 className="text-base font-semibold" style={{ color: "#ffffff", marginBottom: 5 }}>Welcome to Infinity</h3>
                         <p className="text-xs" style={{ color: "rgba(255,255,255,0.45)" }}>Sign in to sync your workspace across devices</p>
                       </div>
 
                       <button
                         onClick={() => setAuthView("signin")}
-                        className="block w-full rounded-xl text-sm font-semibold text-center transition-all"
-                        style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.14)", color: "#ffffff", padding: "12px 16px" }}
+                        className="block rounded-xl text-sm font-semibold text-center transition-all"
+                        style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.14)", color: "#ffffff", padding: "12px 16px", marginLeft: 12, marginRight: 12 }}
                         onMouseOver={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.16)")}
                         onMouseOut={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.1)")}
                       >
@@ -317,8 +318,8 @@ export function TopBar() {
 
                       <button
                         onClick={() => setAuthView("register")}
-                        className="block w-full rounded-xl text-sm font-semibold text-center transition-all"
-                        style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)", padding: "12px 16px" }}
+                        className="block rounded-xl text-sm font-semibold text-center transition-all"
+                        style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)", padding: "12px 16px", marginLeft: 12, marginRight: 12 }}
                         onMouseOver={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.11)")}
                         onMouseOut={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.06)")}
                       >
@@ -333,8 +334,8 @@ export function TopBar() {
 
                       <a
                         href={authApi.googleLoginUrl()}
-                        className="flex items-center justify-center gap-2.5 w-full rounded-xl text-sm font-medium transition-all"
-                        style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "#ffffff", padding: "12px 16px" }}
+                        className="flex items-center justify-center gap-2.5 rounded-xl text-sm font-medium transition-all"
+                        style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "#ffffff", padding: "12px 16px", marginLeft: 12, marginRight: 12 }}
                         onMouseOver={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.11)")}
                         onMouseOut={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.06)")}
                       >
@@ -384,7 +385,7 @@ export function TopBar() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: -6 }}
                 transition={{ duration: 0.15 }}
-                className="absolute right-0 top-12 w-56 rounded-2xl overflow-hidden"
+                className="absolute right-0 top-12 w-64 rounded-2xl"
                 style={{
                   background: "rgba(10,10,10,0.72)",
                   backdropFilter: "blur(32px)",
@@ -393,27 +394,28 @@ export function TopBar() {
                   zIndex: 400,
                 }}
               >
-                <div className="px-5 py-4 flex items-center gap-3">
+                <div className="flex flex-col items-center" style={{ padding: "20px 20px 16px 20px", gap: 10 }}>
                   <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold overflow-hidden shrink-0"
+                    className="w-11 h-11 rounded-full flex items-center justify-center text-sm font-semibold overflow-hidden shrink-0"
                     style={{ background: "rgba(255,255,255,0.1)", color: "#ffffff" }}
                   >
                     {user?.avatar_url ? (
                       <img src={user.avatar_url} alt="" className="w-full h-full object-cover" />
                     ) : initials}
                   </div>
-                  <div className="min-w-0">
+                  <div className="text-center min-w-0">
                     <p className="text-sm font-medium truncate" style={{ color: "#ffffff" }}>{user?.name}</p>
                     <p className="text-xs truncate" style={{ color: "rgba(255,255,255,0.45)" }}>@{user?.email?.split("@")[0]}</p>
                   </div>
                 </div>
 
-                <div className="h-px mx-4" style={{ background: "rgba(255,255,255,0.08)" }} />
+                <div className="h-px mx-4" style={{ background: "rgba(255,255,255,0.08)", marginBottom: 4 }} />
 
+                <div style={{ padding: "8px 0 12px 0" }}>
                 <button
                   onClick={openDashboard}
-                  className="w-full flex items-center gap-3 px-5 py-3 text-sm text-left transition-colors"
-                  style={{ color: "rgba(255,255,255,0.85)" }}
+                  className="flex items-center gap-3 text-sm text-left transition-colors rounded-xl"
+                  style={{ color: "rgba(255,255,255,0.85)", margin: "0 10px", padding: "10px 12px", width: "calc(100% - 20px)" }}
                   onMouseOver={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.07)")}
                   onMouseOut={(e) => (e.currentTarget.style.background = "transparent")}
                 >
@@ -424,12 +426,10 @@ export function TopBar() {
                   Dashboard
                 </button>
 
-                <div className="h-px mx-4" style={{ background: "rgba(255,255,255,0.08)" }} />
-
                 <button
                   onClick={logout}
-                  className="w-full flex items-center gap-3 px-5 py-3 text-sm text-left transition-colors"
-                  style={{ color: "rgba(255,100,100,0.9)" }}
+                  className="flex items-center gap-3 text-sm text-left transition-colors rounded-xl"
+                  style={{ color: "rgba(255,100,100,0.9)", margin: "0 10px", padding: "10px 12px", width: "calc(100% - 20px)" }}
                   onMouseOver={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.07)")}
                   onMouseOut={(e) => (e.currentTarget.style.background = "transparent")}
                 >
@@ -440,6 +440,7 @@ export function TopBar() {
                   </svg>
                   Sign Out
                 </button>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
