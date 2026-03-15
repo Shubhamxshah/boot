@@ -225,12 +225,28 @@ export function TopBar() {
       className="fixed top-0 left-0 right-0"
       style={{ zIndex: 200 }}
     >
-      {/* Top strip — logo left, avatar right */}
-      <div className="flex items-center justify-between px-4" style={{ height: 52 }}>
-        {/* Logo */}
+      {/* Search bar + avatar — centered row */}
+      <div className="flex justify-center items-center" style={{ paddingTop: 62 }}>
+        <div
+          className="flex items-center gap-0 rounded-full overflow-hidden"
+          style={{
+            width: "50%",
+            border: "1px solid rgba(255,255,255,0.12)",
+            background: "rgba(255,255,255,0.04)",
+            backdropFilter: "blur(12px)",
+          }}
+        >
+          {/* Input */}
+          <input
+            type="text"
+            placeholder="Search"
+            className="flex-1 bg-transparent outline-none text-sm"
+            style={{ color: "#e8f0ec", height: 38, paddingLeft: 16, paddingRight: 16 }}
+          />
+        </div>
 
-        {/* Avatar */}
-        <div className="relative shrink-0" ref={menuRef}>
+        {/* Avatar — 2cm (32px) to the right of search bar */}
+        <div className="relative shrink-0" ref={menuRef} style={{ marginLeft: 16 }}>
         <button
           onClick={handleAvatarClick}
           className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold overflow-hidden"
@@ -417,28 +433,7 @@ export function TopBar() {
           )}
         </AnimatePresence>
       </div>
-    </div>{/* end top strip */}
-
-    {/* Search bar — centered, half-width, floats below the top strip */}
-    <div className="flex justify-center" style={{ paddingTop: 10 }}>
-      <div
-        className="flex items-center gap-0 rounded-full overflow-hidden"
-        style={{
-          width: "50%",
-          border: "1px solid rgba(255,255,255,0.12)",
-          background: "rgba(255,255,255,0.04)",
-          backdropFilter: "blur(12px)",
-        }}
-      >
-        {/* Input */}
-        <input
-          type="text"
-          placeholder="Search"
-          className="flex-1 bg-transparent outline-none text-sm"
-          style={{ color: "#e8f0ec", height: 38, paddingLeft: 16, paddingRight: 16 }}
-        />
       </div>
     </div>
-  </div>
   );
 }
