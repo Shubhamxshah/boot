@@ -127,7 +127,7 @@ func (d *DockerOrchestrator) Launch(ctx context.Context, cfg SessionConfig) (*Se
 	return &SessionInfo{
 		ContainerID: resp.ID,
 		Port:        hostPort,
-		VNCUrl:      fmt.Sprintf("http://localhost:%d/vnc.html", hostPort),
+		VNCUrl:      fmt.Sprintf("http://localhost:%d/vnc.html?autoconnect=1&reconnect=1&resize=scale", hostPort),
 	}, nil
 }
 
