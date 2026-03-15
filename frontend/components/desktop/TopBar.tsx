@@ -222,33 +222,15 @@ export function TopBar() {
 
   return (
     <div
-      className="fixed top-0 left-0 right-0 flex items-center px-4 gap-3"
-      style={{ height: 52, background: "rgba(10,15,13,0.7)", backdropFilter: "blur(24px)", zIndex: 200 }}
+      className="fixed top-0 left-0 right-0"
+      style={{ zIndex: 200 }}
     >
-      {/* Logo */}
-      <div className="shrink-0">
-        <div
-          className="w-9 h-9 rounded-xl flex items-center justify-center text-lg font-bold"
-          style={{ background: "#0d1f19", border: "1px solid #1f2e28", color: "#00c896" }}
-        >
-          ∞
-        </div>
-      </div>
+      {/* Top strip — logo left, avatar right */}
+      <div className="flex items-center justify-between px-4" style={{ height: 52 }}>
+        {/* Logo */}
 
-      {/* Search */}
-      <div className="flex-1">
-        <input
-          type="text"
-          placeholder="Search"
-          className="w-full px-5 py-2 rounded-full text-sm outline-none"
-          style={{ background: "rgba(13,24,20,0.8)", border: "1px solid rgba(31,46,40,0.9)", color: "#e8f0ec" }}
-          onFocus={(e) => (e.currentTarget.style.borderColor = "#00c896")}
-          onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(31,46,40,0.9)")}
-        />
-      </div>
-
-      {/* Avatar */}
-      <div className="relative shrink-0" ref={menuRef}>
+        {/* Avatar */}
+        <div className="relative shrink-0" ref={menuRef}>
         <button
           onClick={handleAvatarClick}
           className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold overflow-hidden"
@@ -435,6 +417,28 @@ export function TopBar() {
           )}
         </AnimatePresence>
       </div>
+    </div>{/* end top strip */}
+
+    {/* Search bar — centered, half-width, floats below the top strip */}
+    <div className="flex justify-center" style={{ paddingTop: 10 }}>
+      <div
+        className="flex items-center gap-0 rounded-full overflow-hidden"
+        style={{
+          width: "50%",
+          border: "1px solid rgba(255,255,255,0.12)",
+          background: "rgba(255,255,255,0.04)",
+          backdropFilter: "blur(12px)",
+        }}
+      >
+        {/* Input */}
+        <input
+          type="text"
+          placeholder="Search"
+          className="flex-1 bg-transparent outline-none text-sm"
+          style={{ color: "#e8f0ec", height: 38, paddingLeft: 16, paddingRight: 16 }}
+        />
+      </div>
     </div>
+  </div>
   );
 }

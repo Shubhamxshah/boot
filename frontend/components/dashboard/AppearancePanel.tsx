@@ -1,5 +1,6 @@
 "use client";
 import { useRef, useState } from "react";
+
 import { useDesktopStore } from "@/store/desktopStore";
 
 const PRESETS = [
@@ -111,7 +112,7 @@ export function AppearancePanel() {
             className="absolute top-0 left-0 right-0 flex items-center px-3 gap-2"
             style={{ height: 32, background: "rgba(10,15,13,0.6)", backdropFilter: "blur(12px)" }}
           >
-            <div className="w-5 h-5 rounded-md flex items-center justify-center text-xs font-bold" style={{ background: "#0d1f19", color: "#00c896" }}>∞</div>
+            <div className="w-5 h-5 rounded-md" style={{ background: "#0d1f19" }} />
             <div className="flex-1 h-4 rounded-full" style={{ background: "rgba(13,24,20,0.7)", border: "1px solid rgba(31,46,40,0.6)" }} />
             <div className="w-5 h-5 rounded-full" style={{ background: "#1a2820" }} />
           </div>
