@@ -12,7 +12,7 @@ export function useAuth() {
     localStorage.setItem("user", JSON.stringify(res.user));
     store.setToken(res.token);
     store.setUser(res.user);
-    router.replace("/desktop");
+    router.replace("/");
   };
 
   const register = async (name: string, email: string, password: string) => {
@@ -21,13 +21,13 @@ export function useAuth() {
     localStorage.setItem("user", JSON.stringify(res.user));
     store.setToken(res.token);
     store.setUser(res.user);
-    router.replace("/desktop");
+    router.replace("/");
   };
 
   const logout = async () => {
     try { await authApi.logout(); } catch {}
     store.logout();
-    router.replace("/login");
+    router.replace("/");
   };
 
   return { ...store, login, register, logout };

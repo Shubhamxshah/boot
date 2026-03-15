@@ -1,11 +1,15 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { LoginForm } from "./LoginForm";
 import { RegisterForm } from "./RegisterForm";
 
 export function LoginPage() {
-  const [view, setView] = useState<"login" | "register">("login");
+  const searchParams = useSearchParams();
+  const [view, setView] = useState<"login" | "register">(
+    searchParams?.get("tab") === "register" ? "register" : "login"
+  );
 
   return (
     <div

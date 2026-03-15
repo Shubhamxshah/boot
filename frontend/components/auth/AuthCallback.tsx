@@ -11,7 +11,7 @@ function CallbackInner() {
 
   useEffect(() => {
     const token = params.get("token");
-    if (!token) { router.replace("/login"); return; }
+    if (!token) { router.replace("/"); return; }
 
     localStorage.setItem("access_token", token);
     setToken(token);
@@ -19,9 +19,9 @@ function CallbackInner() {
     authApi.me().then((user) => {
       setUser(user);
       localStorage.setItem("user", JSON.stringify(user));
-      router.replace("/desktop");
+      router.replace("/");
     }).catch(() => {
-      router.replace("/login");
+      router.replace("/");
     });
   }, []);
 

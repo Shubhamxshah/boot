@@ -1,19 +1,13 @@
 "use client";
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import { Desktop } from "./Desktop";
 
 export function DesktopPage() {
-  const router = useRouter();
-  const { isAuthenticated, isLoading, initialize } = useAuthStore();
+  const { isLoading, initialize } = useAuthStore();
 
   useEffect(() => {
-    initialize().then(() => {
-      if (!useAuthStore.getState().isAuthenticated) {
-        router.replace("/login");
-      }
-    });
+    initialize();
   }, []);
 
   if (isLoading) {
@@ -23,8 +17,6 @@ export function DesktopPage() {
       </div>
     );
   }
-
-  if (!isAuthenticated) return null;
 
   return <Desktop />;
 }

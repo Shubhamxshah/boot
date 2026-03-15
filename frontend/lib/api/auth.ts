@@ -8,7 +8,7 @@ export const authApi = {
   login: (data: { email: string; password: string }) =>
     apiClient.post<AuthResponse>("/auth/login", data),
 
-  me: () => apiClient.get<User>("/auth/me"),
+  me: () => apiClient.get<{ user: User }>("/auth/me").then((r) => r.user),
 
   logout: () => apiClient.post("/auth/logout"),
 
