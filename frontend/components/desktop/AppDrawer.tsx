@@ -1,16 +1,24 @@
 "use client";
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useDesktopStore } from "@/store/desktopStore";
 import { useWindowStore } from "@/store/windowStore";
-import { useAuthStore } from "@/store/authStore";
 import { sessionsApi } from "@/lib/api/sessions";
 import { useQuery } from "@tanstack/react-query";
 import { appsApi } from "@/lib/api/apps";
-import { getAppIcon, getAppColor } from "@/lib/utils";
+import { getAppColor } from "@/lib/utils";
+import { getAppSvgIcon } from "./AppIcons";
 import type { App } from "@/types";
 
 const CATEGORIES = ["All", "development", "creative", "desktop", "robotics"];
+
+const CATEGORY_LABELS: Record<string, string> = {
+  All: "All",
+  development: "Development",
+  creative: "Creative",
+  desktop: "Desktop",
+  robotics: "Robotics",
+};
 
 export function AppDrawer() {
   const { setShowAppDrawer } = useDesktopStore();
@@ -58,84 +66,171 @@ export function AppDrawer() {
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
+      animate={{ opacity: 1, backdropFilter: "blur(28px)" }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 flex flex-col items-center pt-20 pb-24"
-      style={{ background: "rgba(0,0,0,0.65)", backdropFilter: "blur(24px)", zIndex: 300 }}
+      transition={{ duration: 0.2 }}
+      className="fixed inset-0 flex flex-col items-center justify-start"
+      style={{ background: "rgba(0,0,0,0.70)", zIndex: 300 }}
       onClick={() => setShowAppDrawer(false)}
     >
-      <div onClick={(e) => e.stopPropagation()} className="w-full max-w-3xl px-4">
-        <input
-          type="text"
-          autoFocus
-          placeholder="Search apps..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full px-5 py-3.5 rounded-2xl text-base outline-none mb-6"
-          style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)", color: "#ffffff" }}
-          onFocus={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.35)")}
-          onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)")}
-        />
+      {/* Content container */}
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="flex flex-col items-center w-full"
+        style={{ paddingTop: "72px", paddingBottom: "100px" }}
+      >
+        {/* Search bar */}
+        <motion.div
+          initial={{ opacity: 0, y: -12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05, duration: 0.2 }}
+          className="w-full"
+          style={{ maxWidth: 560 }}
+        >
+          <input
+            type="text"
+            autoFocus
+            placeholder="Search apps..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full text-base outline-none"
+            style={{
+              background: "rgba(255,255,255,0.08)",
+              border: "1px solid rgba(255,255,255,0.14)",
+              borderRadius: 16,
+              padding: "14px 20px",
+              color: "#ffffff",
+              caretColor: "#00c896",
+              transition: "border-color 0.15s",
+            }}
+            onFocus={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.4)")}
+            onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.14)")}
+          />
+        </motion.div>
 
         {/* Category tabs */}
-        <div className="flex gap-2 mb-8">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setCategory(cat)}
-              className="px-4 py-1.5 rounded-full text-sm capitalize transition-all"
-              style={{
-                background: category === cat ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.06)",
-                color: category === cat ? "#ffffff" : "rgba(255,255,255,0.5)",
-                border: `1px solid ${category === cat ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.1)"}`,
-              }}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.08, duration: 0.2 }}
+          style={{ marginTop: 28, marginBottom: 24, display: "flex", gap: 8 }}
+        >
+          {CATEGORIES.map((cat) => {
+            const isActive = category === cat;
+            return (
+              <button
+                key={cat}
+                onClick={() => setCategory(cat)}
+                className="text-sm transition-all"
+                style={{
+                  padding: "6px 16px",
+                  borderRadius: 999,
+                  background: isActive ? "rgba(255,255,255,0.16)" : "transparent",
+                  color: isActive ? "#ffffff" : "rgba(255,255,255,0.45)",
+                  border: `1px solid ${isActive ? "rgba(255,255,255,0.22)" : "transparent"}`,
+                  fontWeight: isActive ? 500 : 400,
+                  cursor: "pointer",
+                }}
+              >
+                {CATEGORY_LABELS[cat]}
+              </button>
+            );
+          })}
+        </motion.div>
 
         {/* App grid */}
-        <div className="grid grid-cols-6 gap-4">
-          {filtered.map((app) => (
-            <motion.button
-              key={app.id}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={() => launchApp(app)}
-              className="flex flex-col items-center gap-2.5 p-4 rounded-2xl transition-all"
-              style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }}
-              onMouseOver={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.11)")}
-              onMouseOut={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.06)")}
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.22 }}
+          className="w-full"
+          style={{ maxWidth: 760, padding: "0 24px" }}
+        >
+          {filtered.length > 0 ? (
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(148px, 1fr))",
+                gap: "12px",
+              }}
             >
-              <div
-                className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl"
-                style={{ background: `${getAppColor(app.id)}22` }}
-              >
-                {getAppIcon(app.id)}
-              </div>
-              <span className="text-xs text-center leading-tight" style={{ color: "rgba(255,255,255,0.9)" }}>{app.name}</span>
-              <div className="flex gap-1 flex-wrap justify-center">
-                <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.5)" }}>
-                  {app.cpu_cores}C
-                </span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.5)" }}>
-                  {app.memory_gb}GB
-                </span>
-                {app.gpu_required && (
-                  <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: "rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.8)" }}>
-                    GPU
-                  </span>
-                )}
-              </div>
-            </motion.button>
-          ))}
+              <AnimatePresence>
+                {filtered.map((app, i) => {
+                  const color = getAppColor(app.id);
+                  return (
+                    <motion.button
+                      key={app.id}
+                      initial={{ opacity: 0, scale: 0.92 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.92 }}
+                      transition={{ delay: i * 0.03, duration: 0.18 }}
+                      whileHover={{ scale: 1.04, y: -2 }}
+                      whileTap={{ scale: 0.97 }}
+                      onClick={() => launchApp(app)}
+                      className="flex flex-col items-center text-center"
+                      style={{
+                        padding: "16px 12px",
+                        borderRadius: 20,
+                        background: "transparent",
+                        border: "1px solid transparent",
+                        cursor: "pointer",
+                        transition: "background 0.15s, border-color 0.15s",
+                        gap: 0,
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.background = "rgba(255,255,255,0.06)";
+                        e.currentTarget.style.borderColor = "rgba(255,255,255,0.10)";
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.background = "transparent";
+                        e.currentTarget.style.borderColor = "transparent";
+                      }}
+                    >
+                      {/* Icon */}
+                      <div
+                        style={{
+                          width: 64,
+                          height: 64,
+                          borderRadius: 18,
+                          background: `${color}20`,
+                          border: `1px solid ${color}30`,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          marginBottom: 12,
+                          flexShrink: 0,
+                        }}
+                      >
+                        {getAppSvgIcon(app.id, 36)}
+                      </div>
 
-          {filtered.length === 0 && (
-            <div className="col-span-6 text-center py-12" style={{ color: "rgba(255,255,255,0.3)" }}>No apps found</div>
+                      {/* App name */}
+                      <span
+                        className="leading-tight"
+                        style={{
+                          fontSize: 13,
+                          fontWeight: 500,
+                          color: "rgba(255,255,255,0.92)",
+                          display: "block",
+                        }}
+                      >
+                        {app.name}
+                      </span>
+                    </motion.button>
+                  );
+                })}
+              </AnimatePresence>
+            </div>
+          ) : (
+            <div
+              className="text-center py-16"
+              style={{ color: "rgba(255,255,255,0.28)", fontSize: 15 }}
+            >
+              No apps found
+            </div>
           )}
-        </div>
+        </motion.div>
       </div>
     </motion.div>
   );
