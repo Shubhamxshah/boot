@@ -46,6 +46,7 @@ export interface DesktopWindow {
   sessionId: string;
   appId: string;
   appName: string;
+  windowType: "app" | "files" | "terminal";
   vncUrl: string;
   status: "loading" | "ready" | "error";
   x: number;

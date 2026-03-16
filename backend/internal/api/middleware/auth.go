@@ -37,7 +37,7 @@ func JWT(jwtManager *auth.JWTManager) gin.HandlerFunc {
 			return
 		}
 
-		c.Set(CtxUserID, claims.UserID)
+		c.Set(CtxUserID, claims.UserID.String())
 		c.Set(CtxEmail, claims.Email)
 		c.Next()
 	}
@@ -51,6 +51,11 @@ func extractToken(c *gin.Context) string {
 		if len(parts) == 2 && strings.EqualFold(parts[0], "bearer") {
 			return parts[1]
 		}
+	}
+
+	// Check query param (used for WebSocket connections)
+	if t := c.Query("token"); t != "" {
+		return t
 	}
 
 	// Fall back to cookie

@@ -78,10 +78,19 @@ func (d *DockerOrchestrator) Launch(ctx context.Context, cfg SessionConfig) (*Se
 		}
 	}
 
+	mounts := []mount.Mount{}
+	if cfg.UserDataDir != "" {
+		mounts = append(mounts, mount.Mount{
+			Type:   mount.TypeBind,
+			Source: cfg.UserDataDir,
+			Target: "/userdata",
+		})
+	}
+
 	hostCfg := &container.HostConfig{
 		PortBindings:  portBindings,
 		Resources:     resources,
-		Mounts:        []mount.Mount{},
+		Mounts:        mounts,
 		RestartPolicy: container.RestartPolicy{Name: "no"},
 	}
 

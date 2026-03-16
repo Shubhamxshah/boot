@@ -12,6 +12,7 @@ type SessionConfig struct {
 	GPUEnabled   bool
 	IdleMinutes  int
 	StartupBoost int
+	UserDataDir  string // host path to bind-mount into container at /userdata
 }
 
 // SessionInfo is returned after a successful container launch.

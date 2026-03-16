@@ -5,6 +5,8 @@ import { useWindowStore } from "@/store/windowStore";
 import { sessionsApi } from "@/lib/api/sessions";
 import { useHeartbeat } from "@/lib/hooks/useHeartbeat";
 import { useSession } from "@/lib/hooks/useSessions";
+import { FileManagerContent } from "./FileManagerWindow";
+import { TerminalContent } from "./TerminalWindow";
 import type { DesktopWindow } from "@/types";
 
 interface Props {
@@ -27,8 +29,11 @@ export function AppWindow({ window: win }: Props) {
   const resizeRef = useRef({ resizing: false, startX: 0, startY: 0, origW: 0, origH: 0 });
   const isFocused = focusedWindowId === win.sessionId;
 
-  // Poll session when loading
-  const { data: sessionData } = useSession(win.status === "loading" ? win.sessionId : "");
+  // Poll session when loading (only for VNC app windows)
+  const isAppWindow = win.windowType === "app" || !win.windowType;
+  const { data: sessionData } = useSession(
+    isAppWindow && win.status === "loading" ? win.sessionId : ""
+  );
 
   useEffect(() => {
     if (!sessionData?.session) return;
@@ -40,8 +45,11 @@ export function AppWindow({ window: win }: Props) {
     }
   }, [sessionData]);
 
-  // Heartbeat when ready
-  useHeartbeat(win.status === "ready" ? win.sessionId : null, win.status === "ready");
+  // Heartbeat only for VNC app sessions
+  useHeartbeat(
+    isAppWindow && win.status === "ready" ? win.sessionId : null,
+    isAppWindow && win.status === "ready"
+  );
 
   const onTitleMouseDown = useCallback((e: React.MouseEvent) => {
     if (win.maximized) return;
@@ -94,7 +102,9 @@ export function AppWindow({ window: win }: Props) {
 
   const handleClose = async () => {
     closeWindow(win.sessionId);
-    try { await sessionsApi.stop(win.sessionId); } catch {}
+    if (isAppWindow) {
+      try { await sessionsApi.stop(win.sessionId); } catch {}
+    }
   };
 
   if (win.minimized) return null;
@@ -162,31 +172,39 @@ export function AppWindow({ window: win }: Props) {
         </div>
 
         {/* Content */}
-        <div className="flex-1 relative" style={{ background: "#0a0f0d" }}>
-          {win.status === "loading" && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-              <div className="w-8 h-8 border-2 border-[#00c896] border-t-transparent rounded-full animate-spin" />
-              <p className="text-[#6b8a7a] text-sm">Starting {win.appName}...</p>
-            </div>
-          )}
-          {win.status === "error" && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
-              <p className="text-[#e05555] text-sm">Failed to start {win.appName}</p>
-              <button
-                onClick={handleClose}
-                className="text-xs text-[#6b8a7a] hover:text-[#e8f0ec]"
-              >
-                Close
-              </button>
-            </div>
-          )}
-          {win.status === "ready" && win.vncUrl && (
-            <iframe
-              src={win.vncUrl}
-              className="w-full h-full border-none"
-              allow="clipboard-read; clipboard-write; fullscreen"
-              title={win.appName}
-            />
+        <div className="flex-1 relative overflow-hidden" style={{ background: "#0a0f0d" }}>
+          {win.windowType === "files" ? (
+            <FileManagerContent />
+          ) : win.windowType === "terminal" ? (
+            <TerminalContent />
+          ) : (
+            <>
+              {win.status === "loading" && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+                  <div className="w-8 h-8 border-2 border-[#00c896] border-t-transparent rounded-full animate-spin" />
+                  <p className="text-[#6b8a7a] text-sm">Starting {win.appName}...</p>
+                </div>
+              )}
+              {win.status === "error" && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+                  <p className="text-[#e05555] text-sm">Failed to start {win.appName}</p>
+                  <button
+                    onClick={handleClose}
+                    className="text-xs text-[#6b8a7a] hover:text-[#e8f0ec]"
+                  >
+                    Close
+                  </button>
+                </div>
+              )}
+              {win.status === "ready" && win.vncUrl && (
+                <iframe
+                  src={win.vncUrl}
+                  className="w-full h-full border-none"
+                  allow="clipboard-read; clipboard-write; fullscreen"
+                  title={win.appName}
+                />
+              )}
+            </>
           )}
         </div>
 

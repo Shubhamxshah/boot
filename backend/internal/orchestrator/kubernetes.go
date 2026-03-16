@@ -99,6 +99,21 @@ func (k *KubernetesOrchestrator) Launch(ctx context.Context, cfg SessionConfig) 
 		FailureThreshold:    12,
 	}
 
+	var volumes []corev1.Volume
+	var volumeMounts []corev1.VolumeMount
+	if cfg.UserDataDir != "" {
+		volumes = append(volumes, corev1.Volume{
+			Name: "userdata",
+			VolumeSource: corev1.VolumeSource{
+				HostPath: &corev1.HostPathVolumeSource{Path: cfg.UserDataDir},
+			},
+		})
+		volumeMounts = append(volumeMounts, corev1.VolumeMount{
+			Name:      "userdata",
+			MountPath: "/userdata",
+		})
+	}
+
 	pod := &corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      podName,
@@ -111,6 +126,7 @@ func (k *KubernetesOrchestrator) Launch(ctx context.Context, cfg SessionConfig) 
 		},
 		Spec: corev1.PodSpec{
 			RestartPolicy: corev1.RestartPolicyNever,
+			Volumes:       volumes,
 			Containers: []corev1.Container{
 				{
 					Name:  "session",
@@ -120,6 +136,7 @@ func (k *KubernetesOrchestrator) Launch(ctx context.Context, cfg SessionConfig) 
 					},
 					Resources:      resourceReqs,
 					ReadinessProbe: readinessProbe,
+					VolumeMounts:   volumeMounts,
 					Env: []corev1.EnvVar{
 						{Name: "SESSION_ID", Value: cfg.SessionID},
 						{Name: "APP_ID", Value: cfg.AppID},

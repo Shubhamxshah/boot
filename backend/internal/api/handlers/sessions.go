@@ -44,8 +44,11 @@ func (h *SessionHandler) Launch(c *gin.Context) {
 		return
 	}
 
-	userIDVal, _ := c.Get(middleware.CtxUserID)
-	userID := userIDVal.(uuid.UUID)
+	userID, err := uuid.Parse(c.GetString(middleware.CtxUserID))
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid user"})
+		return
+	}
 	ctx := c.Request.Context()
 
 	sessionID, err := h.sessionManager.LaunchAsync(ctx, userID, req.AppID, session.LaunchConfig{
@@ -69,8 +72,11 @@ func (h *SessionHandler) Launch(c *gin.Context) {
 // List returns all active sessions for the authenticated user.
 // GET /api/v1/sessions
 func (h *SessionHandler) List(c *gin.Context) {
-	userIDVal, _ := c.Get(middleware.CtxUserID)
-	userID := userIDVal.(uuid.UUID)
+	userID, err := uuid.Parse(c.GetString(middleware.CtxUserID))
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid user"})
+		return
+	}
 	ctx := c.Request.Context()
 
 	sessions, err := h.queries.GetUserActiveSessions(ctx, userID)
@@ -85,8 +91,11 @@ func (h *SessionHandler) List(c *gin.Context) {
 // Get returns a single session by ID.
 // GET /api/v1/sessions/:id
 func (h *SessionHandler) Get(c *gin.Context) {
-	userIDVal, _ := c.Get(middleware.CtxUserID)
-	userID := userIDVal.(uuid.UUID)
+	userID, err := uuid.Parse(c.GetString(middleware.CtxUserID))
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid user"})
+		return
+	}
 
 	sessionID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -116,8 +125,11 @@ func (h *SessionHandler) Get(c *gin.Context) {
 // Stop terminates a session.
 // DELETE /api/v1/sessions/:id
 func (h *SessionHandler) Stop(c *gin.Context) {
-	userIDVal, _ := c.Get(middleware.CtxUserID)
-	userID := userIDVal.(uuid.UUID)
+	userID, err := uuid.Parse(c.GetString(middleware.CtxUserID))
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid user"})
+		return
+	}
 
 	sessionID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -153,8 +165,11 @@ func (h *SessionHandler) Stop(c *gin.Context) {
 // Heartbeat refreshes the idle timeout for a session.
 // POST /api/v1/sessions/:id/heartbeat
 func (h *SessionHandler) Heartbeat(c *gin.Context) {
-	userIDVal, _ := c.Get(middleware.CtxUserID)
-	userID := userIDVal.(uuid.UUID)
+	userID, err := uuid.Parse(c.GetString(middleware.CtxUserID))
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid user"})
+		return
+	}
 
 	sessionID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -196,8 +211,11 @@ type UpdateConfigRequest struct {
 // UpdateConfig updates resource configuration for a session.
 // PATCH /api/v1/sessions/:id/config
 func (h *SessionHandler) UpdateConfig(c *gin.Context) {
-	userIDVal, _ := c.Get(middleware.CtxUserID)
-	userID := userIDVal.(uuid.UUID)
+	userID, err := uuid.Parse(c.GetString(middleware.CtxUserID))
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid user"})
+		return
+	}
 
 	sessionID, err := uuid.Parse(c.Param("id"))
 	if err != nil {

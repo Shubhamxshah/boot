@@ -47,6 +47,35 @@ export const GazeboIcon = ({ size = 36 }: { size?: number }) => (
   </svg>
 );
 
+export const FileManagerIcon = ({ size = 36 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 128 128" fill="none">
+    <rect x="8" y="32" width="112" height="88" rx="10" fill="#1a2e22"/>
+    <rect x="8" y="32" width="48" height="88" rx="10" fill="#142418"/>
+    <rect x="8" y="32" width="112" height="22" rx="10" fill="#e0a855"/>
+    <rect x="56" y="32" width="64" height="22" rx="0" fill="#e0a855"/>
+    <rect x="18" y="62" width="28" height="8" rx="4" fill="#3a5040"/>
+    <rect x="18" y="78" width="28" height="8" rx="4" fill="#3a5040"/>
+    <rect x="18" y="94" width="28" height="8" rx="4" fill="#3a5040"/>
+    <rect x="62" y="62" width="20" height="20" rx="4" fill="#e0a855" opacity="0.8"/>
+    <rect x="88" y="62" width="20" height="20" rx="4" fill="#e0a855" opacity="0.8"/>
+    <rect x="62" y="88" width="20" height="20" rx="4" fill="#e0a855" opacity="0.6"/>
+    <rect x="88" y="88" width="20" height="20" rx="4" fill="#6b8a7a" opacity="0.6"/>
+  </svg>
+);
+
+export const TerminalIcon = ({ size = 36 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 128 128" fill="none">
+    <rect x="8" y="16" width="112" height="96" rx="10" fill="#0a1510"/>
+    <rect x="8" y="16" width="112" height="28" rx="10" fill="#111c16"/>
+    <rect x="8" y="30" width="112" height="14" fill="#111c16"/>
+    <circle cx="28" cy="30" r="6" fill="#e05555"/>
+    <circle cx="48" cy="30" r="6" fill="#e0a855"/>
+    <circle cx="68" cy="30" r="6" fill="#55c855"/>
+    <text x="20" y="78" fontFamily="monospace" fontSize="20" fill="#00c896">$_</text>
+    <rect x="20" y="88" width="60" height="4" rx="2" fill="#3a5040" opacity="0.6"/>
+  </svg>
+);
+
 export const DrawerIcon = ({ size = 28 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
     <rect x="3" y="3" width="7" height="7" rx="1.5" fill="#6b8a7a"/>

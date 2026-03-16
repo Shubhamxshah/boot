@@ -112,8 +112,13 @@ func main() {
 		log.Info().Msg("warm pool started")
 	}
 
+	filesBaseDir := os.Getenv("FILES_BASE_DIR")
+	if filesBaseDir == "" {
+		filesBaseDir = "/data/users"
+	}
+
 	// Session manager
-	sessionMgr := session.NewManager(queries, orch, warmMgr, registry)
+	sessionMgr := session.NewManager(queries, orch, warmMgr, registry, filesBaseDir)
 
 	// Idle watcher
 	idleWatcher := session.NewIdleWatcher(queries, orch)
@@ -136,13 +141,18 @@ func main() {
 	sessionHandler := handlers.NewSessionHandler(queries, sessionMgr)
 	appHandler := handlers.NewAppHandler(registry)
 
+	fileHandler := handlers.NewFileHandler(filesBaseDir)
+	terminalHandler := handlers.NewTerminalHandler(filesBaseDir)
+
 	// Build router
 	router := api.NewRouter(api.RouterConfig{
-		AuthHandler:    authHandler,
-		SessionHandler: sessionHandler,
-		AppHandler:     appHandler,
-		JWTManager:     jwtManager,
-		FrontendURL:    cfg.App.FrontendURL,
+		AuthHandler:     authHandler,
+		SessionHandler:  sessionHandler,
+		AppHandler:      appHandler,
+		FileHandler:     fileHandler,
+		TerminalHandler: terminalHandler,
+		JWTManager:      jwtManager,
+		FrontendURL:     cfg.App.FrontendURL,
 	})
 
 	// HTTP server

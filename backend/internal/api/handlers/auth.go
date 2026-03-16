@@ -302,8 +302,11 @@ func (h *AuthHandler) Refresh(c *gin.Context) {
 // Me returns the currently authenticated user.
 // GET /api/v1/auth/me
 func (h *AuthHandler) Me(c *gin.Context) {
-	userIDVal, _ := c.Get(middleware.CtxUserID)
-	userID := userIDVal.(uuid.UUID)
+	userID, err := uuid.Parse(c.GetString(middleware.CtxUserID))
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid user"})
+		return
+	}
 	ctx := c.Request.Context()
 
 	user, err := h.queries.GetUserByID(ctx, userID)

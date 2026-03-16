@@ -12,11 +12,13 @@ import (
 
 // RouterConfig groups all handler dependencies.
 type RouterConfig struct {
-	AuthHandler    *handlers.AuthHandler
-	SessionHandler *handlers.SessionHandler
-	AppHandler     *handlers.AppHandler
-	JWTManager     *auth.JWTManager
-	FrontendURL    string
+	AuthHandler     *handlers.AuthHandler
+	SessionHandler  *handlers.SessionHandler
+	AppHandler      *handlers.AppHandler
+	FileHandler     *handlers.FileHandler
+	TerminalHandler *handlers.TerminalHandler
+	JWTManager      *auth.JWTManager
+	FrontendURL     string
 }
 
 // NewRouter builds and returns the configured Gin engine.
@@ -60,6 +62,17 @@ func NewRouter(cfg RouterConfig) *gin.Engine {
 		protected.DELETE("/sessions/:id", cfg.SessionHandler.Stop)
 		protected.POST("/sessions/:id/heartbeat", cfg.SessionHandler.Heartbeat)
 		protected.PATCH("/sessions/:id/config", cfg.SessionHandler.UpdateConfig)
+
+		// Files
+		protected.GET("/files", cfg.FileHandler.List)
+		protected.GET("/files/download", cfg.FileHandler.Download)
+		protected.POST("/files/upload", cfg.FileHandler.Upload)
+		protected.POST("/files/mkdir", cfg.FileHandler.Mkdir)
+		protected.DELETE("/files", cfg.FileHandler.Delete)
+		protected.POST("/files/rename", cfg.FileHandler.Rename)
+
+		// Terminal (WebSocket)
+		protected.GET("/terminal/ws", cfg.TerminalHandler.WS)
 	}
 
 	return r

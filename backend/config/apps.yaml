@@ -8,7 +8,7 @@ apps:
     gpu_required: false
     gpu_optional: false
     idle_minutes: 30
-    warm_pool_size: 2
+    warm_pool_size: 0
     category: development
 
   - id: ubuntu-desktop
@@ -20,7 +20,7 @@ apps:
     gpu_required: false
     gpu_optional: false
     idle_minutes: 20
-    warm_pool_size: 1
+    warm_pool_size: 0
     category: desktop
 
   - id: blender

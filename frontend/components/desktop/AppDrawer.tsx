@@ -50,6 +50,7 @@ export function AppDrawer() {
         sessionId,
         appId: app.id,
         appName: app.name,
+        windowType: "app",
         vncUrl: "",
         status: "loading",
         x: 80,

@@ -3,6 +3,8 @@ package session
 import (
 	"context"
 	"fmt"
+	"os"
+	"path/filepath"
 	"time"
 
 	db "github.com/infinityos/backend/db/generated"
@@ -32,6 +34,7 @@ type Manager struct {
 	orchestrator orchestrator.ContainerOrchestrator
 	warmPool     *warmpool.WarmPoolManager // may be nil
 	registry     *warmpool.AppRegistry
+	filesBaseDir string
 }
 
 // NewManager creates a session Manager.
@@ -40,12 +43,14 @@ func NewManager(
 	orch orchestrator.ContainerOrchestrator,
 	wp *warmpool.WarmPoolManager,
 	registry *warmpool.AppRegistry,
+	filesBaseDir string,
 ) *Manager {
 	return &Manager{
 		queries:      queries,
 		orchestrator: orch,
 		warmPool:     wp,
 		registry:     registry,
+		filesBaseDir: filesBaseDir,
 	}
 }
 
@@ -71,6 +76,14 @@ func (m *Manager) LaunchAsync(ctx context.Context, userID uuid.UUID, appID strin
 		idleMinutes = int32(app.IdleMinutes)
 	}
 
+	// Initialize per-user data directory and pre-create default subdirs
+	userDataDir := filepath.Join(m.filesBaseDir, userID.String())
+	for _, sub := range []string{"", "workspace", ".config", "blender-projects", "downloads"} {
+		if err := os.MkdirAll(filepath.Join(userDataDir, sub), 0755); err != nil {
+			log.Warn().Err(err).Str("dir", filepath.Join(userDataDir, sub)).Msg("failed to create user data dir")
+		}
+	}
+
 	session, err := m.queries.CreateSession(ctx, db.CreateSessionParams{
 		UserID:       userID,
 		AppID:        appID,
@@ -92,6 +105,7 @@ func (m *Manager) LaunchAsync(ctx context.Context, userID uuid.UUID, appID strin
 		MemoryGB:    int(memGB),
 		GPUEnabled:  cfg.GPUEnabled,
 		IdleMinutes: int(idleMinutes),
+		UserDataDir: userDataDir,
 	})
 
 	return session.ID, nil

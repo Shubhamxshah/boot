@@ -2,11 +2,13 @@ FROM infinityos/base:latest
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install code-server (VS Code in browser)
-RUN curl -fsSL https://code-server.dev/install.sh | sh
-
-# Install common development tools
+# Install dependencies + common dev tools
 RUN apt-get update && apt-get install -y \
+    libasound2 \
+    libgbm1 \
+    libnspr4 \
+    libnss3 \
+    libvulkan1 \
     git \
     build-essential \
     python3 \
@@ -14,6 +16,12 @@ RUN apt-get update && apt-get install -y \
     nodejs \
     npm \
     && rm -rf /var/lib/apt/lists/*
+
+# Install VS Code (official Microsoft build)
+RUN wget -O /tmp/vscode.deb \
+        "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64" \
+    && apt-get install -y /tmp/vscode.deb \
+    && rm /tmp/vscode.deb
 
 COPY startup.sh /startup.sh
 RUN chmod +x /startup.sh
