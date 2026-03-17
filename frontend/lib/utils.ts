@@ -21,7 +21,7 @@ export function getAppIcon(appId: string): string {
     vscode: "⚡",
     blender: "🎨",
     gazebo: "🤖",
-    ubuntu: "🖥️",
+    "ubuntu-desktop": "🖥️",
   };
   return icons[appId] || "📦";
 }
@@ -31,7 +31,7 @@ export function getAppColor(appId: string): string {
     vscode: "#007ACC",
     blender: "#EA7600",
     gazebo: "#6B4FBB",
-    ubuntu: "#E95420",
+    "ubuntu-desktop": "#E95420",
   };
   return colors[appId] || "#00c896";
 }

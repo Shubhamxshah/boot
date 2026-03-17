@@ -4,7 +4,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Install dependencies + common dev tools
 RUN apt-get update && apt-get install -y \
-    libasound2 \
+    libasound2t64 \
     libgbm1 \
     libnspr4 \
     libnss3 \

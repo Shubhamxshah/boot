@@ -89,7 +89,7 @@ export function getAppSvgIcon(appId: string, size = 36) {
   switch (appId) {
     case "vscode": return <VSCodeIcon size={size} />;
     case "blender": return <BlenderIcon size={size} />;
-    case "ubuntu": return <UbuntuIcon size={size} />;
+    case "ubuntu-desktop": return <UbuntuIcon size={size} />;
     case "gazebo": return <GazeboIcon size={size} />;
     default: return (
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
