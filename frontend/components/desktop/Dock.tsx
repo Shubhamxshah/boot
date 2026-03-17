@@ -18,7 +18,7 @@ const DOCK_APPS = [
 
 export function Dock() {
   const { openWindow, getWindowByAppId, focusWindow } = useWindowStore();
-  const { setShowAppDrawer, showAppDrawer } = useDesktopStore();
+  const { setShowAppDrawer, showAppDrawer, setDashboardPanel, setShowDashboard } = useDesktopStore();
   const qc = useQueryClient();
 
   const launchApp = async (appId: string) => {
@@ -70,6 +70,11 @@ export function Dock() {
 
       qc.invalidateQueries({ queryKey: ["sessions"] });
     } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (msg.toLowerCase().includes("insufficient credits")) {
+        setDashboardPanel("credits");
+        setShowDashboard(true);
+      }
       console.error("Launch failed", err);
     }
   };

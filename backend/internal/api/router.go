@@ -17,6 +17,7 @@ type RouterConfig struct {
 	AppHandler      *handlers.AppHandler
 	FileHandler     *handlers.FileHandler
 	TerminalHandler *handlers.TerminalHandler
+	BillingHandler  *handlers.BillingHandler
 	JWTManager      *auth.JWTManager
 	FrontendURL     string
 }
@@ -73,6 +74,15 @@ func NewRouter(cfg RouterConfig) *gin.Engine {
 
 		// Terminal (WebSocket)
 		protected.GET("/terminal/ws", cfg.TerminalHandler.WS)
+
+		// Billing & credits
+		if cfg.BillingHandler != nil {
+			protected.GET("/credits", cfg.BillingHandler.GetCredits)
+			protected.POST("/credits/orders", cfg.BillingHandler.CreateOrder)
+			protected.POST("/credits/verify", cfg.BillingHandler.VerifyPayment)
+			protected.GET("/apps/:id/settings", cfg.BillingHandler.GetAppSettings)
+			protected.PUT("/apps/:id/settings", cfg.BillingHandler.SaveAppSettings)
+		}
 	}
 
 	return r

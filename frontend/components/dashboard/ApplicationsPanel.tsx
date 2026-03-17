@@ -1,16 +1,60 @@
 "use client";
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { appsApi } from "@/lib/api/apps";
+import { billingApi } from "@/lib/api/billing";
 import { getAppIcon, getAppColor } from "@/lib/utils";
 import type { App } from "@/types";
 
+// Client-side credit cost estimate (mirrors backend CalcCostPerMinute)
+function calcCostPerMinute(cpu: number, memGb: number, gpu: boolean): number {
+  const cost = 0.5 + cpu * 0.1 + memGb * 0.05 + (gpu ? 2 : 0);
+  return Math.ceil(cost);
+}
+
 function AppRow({ app }: { app: App }) {
+  const qc = useQueryClient();
   const [expanded, setExpanded] = useState(false);
   const [cpuCores, setCpuCores] = useState(app.cpu_cores);
   const [memoryGb, setMemoryGb] = useState(app.memory_gb);
   const [gpuEnabled, setGpuEnabled] = useState(false);
   const [idleMinutes, setIdleMinutes] = useState(app.idle_minutes);
+  const [saved, setSaved] = useState(false);
+
+  // Load saved settings
+  const { data: settingsData } = useQuery({
+    queryKey: ["app-settings", app.id],
+    queryFn: () => billingApi.getAppSettings(app.id),
+    retry: false,
+  });
+
+  // Initialize from saved settings when data arrives
+  useEffect(() => {
+    if (settingsData?.settings) {
+      const s = settingsData.settings;
+      setCpuCores(s.cpu_cores);
+      setMemoryGb(s.memory_gb);
+      setGpuEnabled(s.gpu_enabled);
+      setIdleMinutes(s.idle_minutes);
+    }
+  }, [settingsData]);
+
+  const saveMutation = useMutation({
+    mutationFn: () =>
+      billingApi.saveAppSettings(app.id, {
+        cpu_cores: cpuCores,
+        memory_gb: memoryGb,
+        gpu_enabled: gpuEnabled,
+        idle_minutes: idleMinutes,
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["app-settings", app.id] });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    },
+  });
+
+  const costPerMin = calcCostPerMinute(cpuCores, memoryGb, gpuEnabled);
 
   return (
     <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 14 }}>
@@ -30,13 +74,12 @@ function AppRow({ app }: { app: App }) {
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold" style={{ color: "rgba(255,255,255,0.85)" }}>{app.name}</p>
           <div className="flex gap-2 mt-1">
-            <span className="text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>{app.cpu_cores} CPU</span>
-            <span className="text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>{app.memory_gb}GB RAM</span>
-            {(app.gpu_required || app.gpu_optional) && (
-              <span className="text-xs" style={{ color: "rgba(255,255,255,0.55)" }}>GPU</span>
-            )}
+            <span className="text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>{cpuCores} CPU</span>
+            <span className="text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>{memoryGb}GB RAM</span>
+            {gpuEnabled && <span className="text-xs" style={{ color: "rgba(255,255,255,0.55)" }}>GPU</span>}
           </div>
         </div>
+        <span className="text-xs font-medium" style={{ color: "rgba(255,255,255,0.4)" }}>{costPerMin} cr/min</span>
         <span className="text-sm" style={{ color: "rgba(255,255,255,0.3)" }}>{expanded ? "▲" : "▼"}</span>
       </button>
 
@@ -101,6 +144,21 @@ function AppRow({ app }: { app: App }) {
                   className="w-7 h-7 rounded-lg flex items-center justify-center text-sm"
                   style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.8)" }}>+</button>
               </div>
+            </div>
+
+            {/* Cost estimate + Save */}
+            <div className="flex items-center justify-between pt-2">
+              <span className="text-xs" style={{ color: "rgba(255,255,255,0.35)" }}>
+                {costPerMin} credits/min
+              </span>
+              <button
+                onClick={() => saveMutation.mutate()}
+                disabled={saveMutation.isPending}
+                className="text-xs font-semibold px-4 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+                style={{ background: saved ? "rgba(0,200,150,0.2)" : "rgba(255,255,255,0.12)", color: saved ? "rgba(0,200,150,0.9)" : "rgba(255,255,255,0.8)", border: "1px solid rgba(255,255,255,0.14)" }}
+              >
+                {saveMutation.isPending ? "Saving…" : saved ? "Saved ✓" : "Save"}
+              </button>
             </div>
           </div>
         </div>

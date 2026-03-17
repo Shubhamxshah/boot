@@ -16,6 +16,7 @@ import (
 	"github.com/bootx/backend/internal/api"
 	"github.com/bootx/backend/internal/api/handlers"
 	"github.com/bootx/backend/internal/auth"
+	"github.com/bootx/backend/internal/billing"
 	"github.com/bootx/backend/internal/orchestrator"
 	"github.com/bootx/backend/internal/session"
 	"github.com/bootx/backend/internal/warmpool"
@@ -139,7 +140,22 @@ func main() {
 		cfg.App.FrontendURL,
 		cfg.Auth.RefreshTokenExpiryDays,
 	)
-	sessionHandler := handlers.NewSessionHandler(queries, sessionMgr)
+	// Billing config
+	billingCfg := billing.Config{
+		BaseRate: cfg.Billing.BaseRate,
+		CPURate:  cfg.Billing.CPURate,
+		MemRate:  cfg.Billing.MemRate,
+		GPURate:  cfg.Billing.GPURate,
+	}
+
+	// Razorpay service
+	rzpService := billing.NewRazorpayService(cfg.Billing.RazorpayKeyID, cfg.Billing.RazorpayKeySecret)
+
+	// Billing worker
+	billingWorker := billing.NewWorker(queries, sessionMgr, billingCfg)
+	billingWorker.Start(ctx)
+
+	sessionHandler := handlers.NewSessionHandler(queries, sessionMgr, billingCfg)
 	appHandler := handlers.NewAppHandler(registry)
 
 	fileHandler := handlers.NewFileHandler(filesBaseDir)
@@ -154,6 +170,7 @@ func main() {
 	defer dockerCli.Close()
 
 	terminalHandler := handlers.NewTerminalHandler(queries, dockerCli)
+	billingHandler := handlers.NewBillingHandler(queries, rzpService, billingCfg, cfg.Billing.RazorpayKeyID, pool)
 
 	// Build router
 	router := api.NewRouter(api.RouterConfig{
@@ -162,6 +179,7 @@ func main() {
 		AppHandler:      appHandler,
 		FileHandler:     fileHandler,
 		TerminalHandler: terminalHandler,
+		BillingHandler:  billingHandler,
 		JWTManager:      jwtManager,
 		FrontendURL:     cfg.App.FrontendURL,
 	})
@@ -193,6 +211,7 @@ func main() {
 	defer cancel()
 
 	idleWatcher.Stop()
+	billingWorker.Stop()
 	if warmMgr != nil {
 		warmMgr.Stop()
 	}

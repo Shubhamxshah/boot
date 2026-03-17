@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	db "github.com/bootx/backend/db/generated"
 	"github.com/bootx/backend/internal/api/middleware"
+	"github.com/bootx/backend/internal/billing"
 	"github.com/bootx/backend/internal/session"
 	"github.com/jackc/pgx/v5"
 	"github.com/rs/zerolog/log"
@@ -16,13 +17,15 @@ import (
 type SessionHandler struct {
 	queries        *db.Queries
 	sessionManager *session.Manager
+	billingCfg     billing.Config
 }
 
 // NewSessionHandler creates a SessionHandler.
-func NewSessionHandler(queries *db.Queries, mgr *session.Manager) *SessionHandler {
+func NewSessionHandler(queries *db.Queries, mgr *session.Manager, billingCfg billing.Config) *SessionHandler {
 	return &SessionHandler{
 		queries:        queries,
 		sessionManager: mgr,
+		billingCfg:     billingCfg,
 	}
 }
 
@@ -50,6 +53,25 @@ func (h *SessionHandler) Launch(c *gin.Context) {
 		return
 	}
 	ctx := c.Request.Context()
+
+	// Credit pre-flight check: require at least 10 minutes of credits.
+	uc, err := h.queries.GetOrCreateUserCredits(ctx, userID)
+	if err != nil {
+		log.Error().Err(err).Msg("get credits failed")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to check credits"})
+		return
+	}
+	costPerMin := billing.CalcCostPerMinute(req.CPUCores, int(req.MemoryGB), req.GPUEnabled, h.billingCfg)
+	minRequired := costPerMin * 10
+	if uc.Balance < minRequired {
+		c.JSON(http.StatusPaymentRequired, gin.H{
+			"error":    "insufficient credits",
+			"code":     "INSUFFICIENT_CREDITS",
+			"balance":  uc.Balance,
+			"required": minRequired,
+		})
+		return
+	}
 
 	sessionID, err := h.sessionManager.LaunchAsync(ctx, userID, req.AppID, session.LaunchConfig{
 		CPUCores:    req.CPUCores,

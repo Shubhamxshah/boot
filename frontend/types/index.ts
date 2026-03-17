@@ -66,3 +66,43 @@ export interface AuthResponse {
 export interface AppsResponse {
   apps: App[];
 }
+
+export interface UserCredits {
+  balance: number;
+  transactions: CreditTransaction[];
+}
+
+export interface CreditTransaction {
+  id: string;
+  user_id: string;
+  type: "session_usage" | "purchase" | "bonus";
+  amount: number;
+  balance_after: number;
+  description: string;
+  session_id?: string;
+  razorpay_order_id?: string;
+  razorpay_payment_id?: string;
+  created_at: string;
+}
+
+export interface AppSettings {
+  user_id: string;
+  app_id: string;
+  cpu_cores: number;
+  memory_gb: number;
+  gpu_enabled: boolean;
+  idle_minutes: number;
+  updated_at: string;
+}
+
+export interface CreateOrderResponse {
+  order_id: string;
+  amount_cents: number;
+  credits: number;
+  razorpay_key_id: string;
+}
+
+export interface VerifyPaymentResponse {
+  balance: number;
+  credits_added: number;
+}

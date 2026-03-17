@@ -4,6 +4,7 @@ import { AnimatePresence } from "framer-motion";
 import { useDesktopStore } from "@/store/desktopStore";
 import { useWindowStore } from "@/store/windowStore";
 import { useAuthStore } from "@/store/authStore";
+import { useSessionCleanup } from "@/lib/hooks/useSessionCleanup";
 import { TopBar } from "./TopBar";
 import { Dock } from "./Dock";
 import { WindowManager } from "./WindowManager";
@@ -14,6 +15,7 @@ export function Desktop() {
   const { showAppDrawer, setShowAppDrawer, setShowDashboard, showDashboard, wallpaper } = useDesktopStore();
   const { focusedWindowId, minimizeWindow, maximizeWindow, closeWindow } = useWindowStore();
   const { isAuthenticated } = useAuthStore();
+  useSessionCleanup();
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.ctrlKey && e.altKey) {

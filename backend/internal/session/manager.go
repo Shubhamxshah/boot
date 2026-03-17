@@ -11,6 +11,7 @@ import (
 	"github.com/bootx/backend/internal/orchestrator"
 	"github.com/bootx/backend/internal/warmpool"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog/log"
 )
@@ -62,18 +63,42 @@ func (m *Manager) LaunchAsync(ctx context.Context, userID uuid.UUID, appID strin
 		return uuid.Nil, fmt.Errorf("app %q not found", appID)
 	}
 
-	// Apply defaults from app definition if not overridden
+	// Load saved per-user app settings (if any) as a middle-tier default.
+	savedSettings, settingsErr := m.queries.GetUserAppSettings(ctx, db.GetUserAppSettingsParams{
+		UserID: userID,
+		AppID:  appID,
+	})
+	hasSaved := settingsErr == nil
+
+	// Precedence: explicit request params > saved settings > app defaults
 	cpuCores := cfg.CPUCores
 	if cpuCores <= 0 {
-		cpuCores = app.CPUCores
+		if hasSaved {
+			cpuCores = savedSettings.CPUCores
+		} else {
+			cpuCores = app.CPUCores
+		}
 	}
 	memGB := cfg.MemoryGB
 	if memGB <= 0 {
-		memGB = int32(app.MemoryGB)
+		if hasSaved {
+			memGB = savedSettings.MemoryGB
+		} else {
+			memGB = int32(app.MemoryGB)
+		}
 	}
 	idleMinutes := cfg.IdleMinutes
 	if idleMinutes <= 0 {
-		idleMinutes = int32(app.IdleMinutes)
+		if hasSaved {
+			idleMinutes = savedSettings.IdleMinutes
+		} else {
+			idleMinutes = int32(app.IdleMinutes)
+		}
+	}
+	// GPU: explicit request wins; if not set, fall through to saved or app default.
+	gpuEnabled := cfg.GPUEnabled
+	if !gpuEnabled && hasSaved && settingsErr != pgx.ErrNoRows {
+		gpuEnabled = savedSettings.GPUEnabled
 	}
 
 	// Initialize per-user data directory and pre-create default subdirs
@@ -89,7 +114,7 @@ func (m *Manager) LaunchAsync(ctx context.Context, userID uuid.UUID, appID strin
 		AppID:        appID,
 		CpuCores:     cpuCores,
 		MemoryGb:     memGB,
-		GpuEnabled:   cfg.GPUEnabled,
+		GpuEnabled:   gpuEnabled,
 		IdleMinutes:  idleMinutes,
 		StartupBoost: 0,
 	})
@@ -103,7 +128,7 @@ func (m *Manager) LaunchAsync(ctx context.Context, userID uuid.UUID, appID strin
 		Image:       app.Image,
 		CPUCores:    cpuCores,
 		MemoryGB:    int(memGB),
-		GPUEnabled:  cfg.GPUEnabled,
+		GPUEnabled:  gpuEnabled,
 		IdleMinutes: int(idleMinutes),
 		UserDataDir: userDataDir,
 	})

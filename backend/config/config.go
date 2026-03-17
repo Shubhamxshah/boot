@@ -14,6 +14,7 @@ type Config struct {
 	Google   GoogleConfig
 	App      AppConfig
 	WarmPool WarmPoolConfig
+	Billing  BillingConfig
 }
 
 type ServerConfig struct {
@@ -53,6 +54,15 @@ type WarmPoolConfig struct {
 	Enabled bool `mapstructure:"enabled"`
 }
 
+type BillingConfig struct {
+	BaseRate          float64 `mapstructure:"base_rate"`
+	CPURate           float64 `mapstructure:"cpu_rate"`
+	MemRate           float64 `mapstructure:"mem_rate"`
+	GPURate           float64 `mapstructure:"gpu_rate"`
+	RazorpayKeyID     string  `mapstructure:"razorpay_key_id"`
+	RazorpayKeySecret string  `mapstructure:"razorpay_key_secret"`
+}
+
 func Load() (*Config, error) {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
@@ -70,6 +80,10 @@ func Load() (*Config, error) {
 	viper.SetDefault("app.orchestrator", "docker")
 	viper.SetDefault("app.gpu_enabled", false)
 	viper.SetDefault("warmpool.enabled", true)
+	viper.SetDefault("billing.base_rate", 0.5)
+	viper.SetDefault("billing.cpu_rate", 0.1)
+	viper.SetDefault("billing.mem_rate", 0.05)
+	viper.SetDefault("billing.gpu_rate", 2.0)
 
 	_ = viper.ReadInConfig()
 
@@ -90,6 +104,12 @@ func Load() (*Config, error) {
 	_ = viper.BindEnv("app.gpu_enabled", "GPU_ENABLED")
 	_ = viper.BindEnv("app.runpod_api_key", "RUNPOD_API_KEY")
 	_ = viper.BindEnv("warmpool.enabled", "WARM_POOL_ENABLED")
+	_ = viper.BindEnv("billing.base_rate", "BILLING_BASE_RATE")
+	_ = viper.BindEnv("billing.cpu_rate", "BILLING_CPU_RATE")
+	_ = viper.BindEnv("billing.mem_rate", "BILLING_MEM_RATE")
+	_ = viper.BindEnv("billing.gpu_rate", "BILLING_GPU_RATE")
+	_ = viper.BindEnv("billing.razorpay_key_id", "RAZORPAY_KEY_ID")
+	_ = viper.BindEnv("billing.razorpay_key_secret", "RAZORPAY_KEY_SECRET")
 
 	cfg := &Config{}
 	if err := viper.Unmarshal(cfg); err != nil {

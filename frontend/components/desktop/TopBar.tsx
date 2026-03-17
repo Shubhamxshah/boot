@@ -4,6 +4,8 @@ import { useAuthStore } from "@/store/authStore";
 import { useDesktopStore } from "@/store/desktopStore";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { authApi } from "@/lib/api/auth";
+import { billingApi } from "@/lib/api/billing";
+import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 
 type AuthView = "welcome" | "signin" | "register";
@@ -188,6 +190,13 @@ export function TopBar() {
   const { logout } = useAuth();
   const menuRef = useRef<HTMLDivElement>(null);
   const [authView, setAuthView] = useState<AuthView>("welcome");
+
+  const { data: creditsData } = useQuery({
+    queryKey: ["credits"],
+    queryFn: () => billingApi.getBalance(),
+    enabled: isAuthenticated,
+    refetchInterval: 30_000,
+  });
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -410,6 +419,11 @@ export function TopBar() {
                   <div className="text-center min-w-0">
                     <p className="text-sm font-medium truncate" style={{ color: "#ffffff" }}>{user?.name}</p>
                     <p className="text-xs truncate" style={{ color: "rgba(255,255,255,0.45)" }}>@{user?.email?.split("@")[0]}</p>
+                    {creditsData !== undefined && (
+                      <p className="text-xs mt-1 font-semibold" style={{ color: "rgba(0,200,150,0.8)" }}>
+                        {creditsData.balance.toLocaleString()} credits
+                      </p>
+                    )}
                   </div>
                 </div>
 

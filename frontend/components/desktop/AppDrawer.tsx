@@ -21,7 +21,7 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 export function AppDrawer() {
-  const { setShowAppDrawer } = useDesktopStore();
+  const { setShowAppDrawer, setDashboardPanel, setShowDashboard } = useDesktopStore();
   const { openWindow, getWindowByAppId, focusWindow } = useWindowStore();
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
@@ -61,6 +61,11 @@ export function AppDrawer() {
         maximized: false,
       });
     } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (msg.toLowerCase().includes("insufficient credits")) {
+        setDashboardPanel("credits");
+        setShowDashboard(true);
+      }
       console.error(err);
     }
   };
