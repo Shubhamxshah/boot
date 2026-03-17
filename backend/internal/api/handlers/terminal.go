@@ -4,22 +4,29 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
-	"os"
-	"os/exec"
-	"path/filepath"
 
-	"github.com/creack/pty"
+	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/container"
+	dockerclient "github.com/docker/docker/client"
 	"github.com/gin-gonic/gin"
+	db "github.com/infinityos/backend/db/generated"
+	"github.com/infinityos/backend/internal/api/middleware"
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/rs/zerolog/log"
 	"nhooyr.io/websocket"
 )
 
 type TerminalHandler struct {
-	BaseDir string
+	queries      *db.Queries
+	dockerClient *dockerclient.Client
 }
 
-func NewTerminalHandler(baseDir string) *TerminalHandler {
-	return &TerminalHandler{BaseDir: baseDir}
+func NewTerminalHandler(queries *db.Queries, dockerClient *dockerclient.Client) *TerminalHandler {
+	return &TerminalHandler{
+		queries:      queries,
+		dockerClient: dockerClient,
+	}
 }
 
 type terminalMsg struct {
@@ -28,16 +35,45 @@ type terminalMsg struct {
 	Rows uint16 `json:"rows"`
 }
 
-// WS opens a WebSocket-backed PTY shell in the user's home directory.
-// GET /api/v1/terminal/ws
+// WS opens a WebSocket-backed PTY shell inside the user's session container.
+// The shell runs inside the container so it cannot access other users' data.
+// GET /api/v1/terminal/ws?session_id=<uuid>
 func (h *TerminalHandler) WS(c *gin.Context) {
-	userID := c.GetString("user_id")
-	userDir := filepath.Join(h.BaseDir, userID)
-
-	if err := os.MkdirAll(userDir, 0755); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to init user dir"})
+	userID, err := uuid.Parse(c.GetString(middleware.CtxUserID))
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid user"})
 		return
 	}
+
+	sessionID, err := uuid.Parse(c.Query("session_id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "session_id required"})
+		return
+	}
+
+	ctx := c.Request.Context()
+	s, err := h.queries.GetSessionByID(ctx, sessionID)
+	if err == pgx.ErrNoRows {
+		c.JSON(http.StatusNotFound, gin.H{"error": "session not found"})
+		return
+	}
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "database error"})
+		return
+	}
+
+	// Ownership check — a user can only exec into their own session
+	if s.UserID != userID {
+		c.JSON(http.StatusForbidden, gin.H{"error": "access denied"})
+		return
+	}
+
+	if s.Status != "ready" || !s.ContainerID.Valid || s.ContainerID.String == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "session not ready"})
+		return
+	}
+
+	containerID := s.ContainerID.String
 
 	conn, err := websocket.Accept(c.Writer, c.Request, &websocket.AcceptOptions{
 		InsecureSkipVerify: true, // CORS is handled by middleware
@@ -48,38 +84,39 @@ func (h *TerminalHandler) WS(c *gin.Context) {
 	}
 	defer conn.Close(websocket.StatusNormalClosure, "")
 
-	ctx := context.Background()
+	wsCtx := context.Background()
 
-	cmd := exec.Command("/bin/bash", "--login")
-	cmd.Env = append(os.Environ(),
-		"TERM=xterm-256color",
-		"COLORTERM=truecolor",
-		"HOME="+userDir,
-		"USER=infinity",
-		"SHELL=/bin/bash",
-		"PS1=\\u@infinity:\\w\\$ ",
-	)
-	cmd.Dir = userDir
-
-	ptmx, err := pty.Start(cmd)
+	execID, err := h.dockerClient.ContainerExecCreate(wsCtx, containerID, types.ExecConfig{
+		AttachStdin:  true,
+		AttachStdout: true,
+		AttachStderr: true,
+		Tty:          true,
+		Cmd:          []string{"/bin/bash", "--login"},
+		WorkingDir:   "/userdata",
+	})
 	if err != nil {
-		log.Error().Err(err).Msg("pty start failed")
-		conn.Write(ctx, websocket.MessageText, []byte("failed to start shell\r\n"))
-		conn.Close(websocket.StatusInternalError, "pty failed")
+		log.Error().Err(err).Str("container_id", containerID).Msg("exec create failed")
+		conn.Write(wsCtx, websocket.MessageText, []byte("failed to start shell\r\n"))
+		conn.Close(websocket.StatusInternalError, "exec failed")
 		return
 	}
-	defer func() {
-		ptmx.Close()
-		cmd.Process.Kill()
-	}()
 
-	// pty output → websocket
+	execAttach, err := h.dockerClient.ContainerExecAttach(wsCtx, execID.ID, types.ExecStartCheck{Tty: true})
+	if err != nil {
+		log.Error().Err(err).Msg("exec attach failed")
+		conn.Write(wsCtx, websocket.MessageText, []byte("failed to attach shell\r\n"))
+		conn.Close(websocket.StatusInternalError, "attach failed")
+		return
+	}
+	defer execAttach.Close()
+
+	// container output → websocket
 	go func() {
 		buf := make([]byte, 4096)
 		for {
-			n, err := ptmx.Read(buf)
+			n, err := execAttach.Reader.Read(buf)
 			if n > 0 {
-				if writeErr := conn.Write(ctx, websocket.MessageBinary, buf[:n]); writeErr != nil {
+				if writeErr := conn.Write(wsCtx, websocket.MessageBinary, buf[:n]); writeErr != nil {
 					return
 				}
 			}
@@ -89,20 +126,22 @@ func (h *TerminalHandler) WS(c *gin.Context) {
 		}
 	}()
 
-	// websocket input → pty
+	// websocket input → container
 	for {
-		msgType, data, err := conn.Read(ctx)
+		msgType, data, err := conn.Read(wsCtx)
 		if err != nil {
 			break
 		}
 		if msgType == websocket.MessageText {
-			// Handle resize: {"type":"resize","cols":80,"rows":24}
 			var msg terminalMsg
 			if json.Unmarshal(data, &msg) == nil && msg.Type == "resize" && msg.Cols > 0 && msg.Rows > 0 {
-				pty.Setsize(ptmx, &pty.Winsize{Cols: msg.Cols, Rows: msg.Rows})
+				h.dockerClient.ContainerExecResize(wsCtx, execID.ID, container.ResizeOptions{
+					Height: uint(msg.Rows),
+					Width:  uint(msg.Cols),
+				})
 			}
 		} else {
-			ptmx.Write(data)
+			execAttach.Conn.Write(data)
 		}
 	}
 }

@@ -1,4 +1,16 @@
 apps:
+  - id: terminal
+    name: Terminal
+    description: Command-line terminal shell
+    image: infinityos/ubuntu:latest
+    cpu_cores: 0.5
+    memory_gb: 1
+    gpu_required: false
+    gpu_optional: false
+    idle_minutes: 30
+    warm_pool_size: 0
+    category: tools
+
   - id: vscode
     name: VS Code
     description: Visual Studio Code browser-based IDE

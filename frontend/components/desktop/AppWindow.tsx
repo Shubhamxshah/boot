@@ -29,26 +29,26 @@ export function AppWindow({ window: win }: Props) {
   const resizeRef = useRef({ resizing: false, startX: 0, startY: 0, origW: 0, origH: 0 });
   const isFocused = focusedWindowId === win.sessionId;
 
-  // Poll session when loading (only for VNC app windows)
-  const isAppWindow = win.windowType === "app" || !win.windowType;
+  // Poll session when loading (for VNC app windows and terminal windows)
+  const isSessionBacked = win.windowType === "app" || win.windowType === "terminal" || !win.windowType;
   const { data: sessionData } = useSession(
-    isAppWindow && win.status === "loading" ? win.sessionId : ""
+    isSessionBacked && win.status === "loading" ? win.sessionId : ""
   );
 
   useEffect(() => {
     if (!sessionData?.session) return;
     const s = sessionData.session;
-    if (s.status === "ready" && s.vnc_url) {
-      updateWindowStatus(win.sessionId, "ready", s.vnc_url);
+    if (s.status === "ready") {
+      updateWindowStatus(win.sessionId, "ready", s.vnc_url ?? "");
     } else if (s.status === "error") {
       updateWindowStatus(win.sessionId, "error");
     }
   }, [sessionData]);
 
-  // Heartbeat only for VNC app sessions
+  // Heartbeat for all session-backed windows
   useHeartbeat(
-    isAppWindow && win.status === "ready" ? win.sessionId : null,
-    isAppWindow && win.status === "ready"
+    isSessionBacked && win.status === "ready" ? win.sessionId : null,
+    isSessionBacked && win.status === "ready"
   );
 
   const onTitleMouseDown = useCallback((e: React.MouseEvent) => {
@@ -102,7 +102,7 @@ export function AppWindow({ window: win }: Props) {
 
   const handleClose = async () => {
     closeWindow(win.sessionId);
-    if (isAppWindow) {
+    if (isSessionBacked) {
       try { await sessionsApi.stop(win.sessionId); } catch {}
     }
   };
@@ -176,7 +176,19 @@ export function AppWindow({ window: win }: Props) {
           {win.windowType === "files" ? (
             <FileManagerContent />
           ) : win.windowType === "terminal" ? (
-            <TerminalContent />
+            win.status === "loading" ? (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+                <div className="w-8 h-8 border-2 border-[#00c896] border-t-transparent rounded-full animate-spin" />
+                <p className="text-[#6b8a7a] text-sm">Starting Terminal...</p>
+              </div>
+            ) : win.status === "error" ? (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+                <p className="text-[#e05555] text-sm">Failed to start Terminal</p>
+                <button onClick={handleClose} className="text-xs text-[#6b8a7a] hover:text-[#e8f0ec]">Close</button>
+              </div>
+            ) : (
+              <TerminalContent sessionId={win.sessionId} />
+            )
           ) : (
             <>
               {win.status === "loading" && (

@@ -2,7 +2,7 @@
 import { useEffect, useRef } from "react";
 import { filesApi } from "@/lib/api/files";
 
-export function TerminalContent() {
+export function TerminalContent({ sessionId }: { sessionId: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const wsRef = useRef<WebSocket | null>(null);
   const termRef = useRef<import("@xterm/xterm").Terminal | null>(null);
@@ -57,7 +57,7 @@ export function TerminalContent() {
       fitRef.current = fit;
 
       // Connect WebSocket
-      const wsUrl = filesApi.wsUrl();
+      const wsUrl = filesApi.wsUrl(sessionId);
       const ws = new WebSocket(wsUrl);
       ws.binaryType = "arraybuffer";
       wsRef.current = ws;

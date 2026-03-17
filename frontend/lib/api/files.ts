@@ -63,12 +63,12 @@ export const filesApi = {
     return res.json();
   },
 
-  wsUrl: () => {
+  wsUrl: (sessionId: string) => {
     const token =
       typeof window !== "undefined" ? localStorage.getItem("access_token") : "";
     const base =
       process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
     const wsBase = base.replace(/^http/, "ws");
-    return `${wsBase}/terminal/ws?token=${token}`;
+    return `${wsBase}/terminal/ws?token=${token}&session_id=${sessionId}`;
   },
 };

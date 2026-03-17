@@ -19,6 +19,7 @@ import (
 	"github.com/infinityos/backend/internal/orchestrator"
 	"github.com/infinityos/backend/internal/session"
 	"github.com/infinityos/backend/internal/warmpool"
+	dockerclient "github.com/docker/docker/client"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/pressly/goose/v3"
@@ -142,7 +143,17 @@ func main() {
 	appHandler := handlers.NewAppHandler(registry)
 
 	fileHandler := handlers.NewFileHandler(filesBaseDir)
-	terminalHandler := handlers.NewTerminalHandler(filesBaseDir)
+
+	dockerCli, err := dockerclient.NewClientWithOpts(
+		dockerclient.FromEnv,
+		dockerclient.WithAPIVersionNegotiation(),
+	)
+	if err != nil {
+		log.Fatal().Err(err).Msg("failed to create docker client")
+	}
+	defer dockerCli.Close()
+
+	terminalHandler := handlers.NewTerminalHandler(queries, dockerCli)
 
 	// Build router
 	router := api.NewRouter(api.RouterConfig{
