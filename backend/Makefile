@@ -62,8 +62,8 @@ docker-down:
 
 ## docker-build: Build all Docker images
 docker-build:
-	docker build -t infinityos/base:latest    -f docker/base/Dockerfile    docker/base
-	docker build -t infinityos/vscode:latest  -f docker/vscode/Dockerfile  docker/vscode
-	docker build -t infinityos/ubuntu:latest  -f docker/ubuntu/Dockerfile  docker/ubuntu
-	docker build -t infinityos/blender:latest -f docker/blender/Dockerfile docker/blender
-	docker build -t infinityos/gazebo:latest  -f docker/gazebo/Dockerfile  docker/gazebo
+	docker build -t bootx/base:latest    -f docker/base/Dockerfile    docker/base
+	docker build -t bootx/vscode:latest  -f docker/vscode/Dockerfile  docker/vscode
+	docker build -t bootx/ubuntu:latest  -f docker/ubuntu/Dockerfile  docker/ubuntu
+	docker build -t bootx/blender:latest -f docker/blender/Dockerfile docker/blender
+	docker build -t bootx/gazebo:latest  -f docker/gazebo/Dockerfile  docker/gazebo

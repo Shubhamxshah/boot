@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	db "github.com/infinityos/backend/db/generated"
+	db "github.com/bootx/backend/db/generated"
 	"github.com/google/uuid"
 )
 

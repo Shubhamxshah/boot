@@ -11,15 +11,15 @@ import (
 	"github.com/docker/docker/api/types/mount"
 	dockerclient "github.com/docker/docker/client"
 	"github.com/docker/go-connections/nat"
-	"github.com/infinityos/backend/internal/ports"
+	"github.com/bootx/backend/internal/ports"
 	"github.com/rs/zerolog/log"
 )
 
 const (
-	labelSessionID = "infinityos.session_id"
-	labelUserID    = "infinityos.user_id"
-	labelAppID     = "infinityos.app_id"
-	labelWarm      = "infinityos.warm"
+	labelSessionID = "bootx.session_id"
+	labelUserID    = "bootx.user_id"
+	labelAppID     = "bootx.app_id"
+	labelWarm      = "bootx.warm"
 	vncPort        = "6080/tcp"
 )
 
@@ -114,7 +114,7 @@ func (d *DockerOrchestrator) Launch(ctx context.Context, cfg SessionConfig) (*Se
 		hostCfg,
 		nil,
 		nil,
-		fmt.Sprintf("infinityos-%s", cfg.SessionID),
+		fmt.Sprintf("bootx-%s", cfg.SessionID),
 	)
 	if err != nil {
 		d.allocator.Release(hostPort)
@@ -188,7 +188,7 @@ func (d *DockerOrchestrator) GetStatus(ctx context.Context, sessionID string) (s
 	}
 }
 
-// Reconcile returns the session IDs of all live infinityos containers.
+// Reconcile returns the session IDs of all live bootx containers.
 func (d *DockerOrchestrator) Reconcile(ctx context.Context) ([]string, error) {
 	f := filters.NewArgs()
 	f.Add("label", labelSessionID)

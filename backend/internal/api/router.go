@@ -4,9 +4,9 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/infinityos/backend/internal/api/handlers"
-	"github.com/infinityos/backend/internal/api/middleware"
-	"github.com/infinityos/backend/internal/auth"
+	"github.com/bootx/backend/internal/api/handlers"
+	"github.com/bootx/backend/internal/api/middleware"
+	"github.com/bootx/backend/internal/auth"
 	"github.com/rs/zerolog/log"
 )
 

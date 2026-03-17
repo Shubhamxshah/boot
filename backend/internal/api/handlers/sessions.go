@@ -5,9 +5,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	db "github.com/infinityos/backend/db/generated"
-	"github.com/infinityos/backend/internal/api/middleware"
-	"github.com/infinityos/backend/internal/session"
+	db "github.com/bootx/backend/db/generated"
+	"github.com/bootx/backend/internal/api/middleware"
+	"github.com/bootx/backend/internal/session"
 	"github.com/jackc/pgx/v5"
 	"github.com/rs/zerolog/log"
 )

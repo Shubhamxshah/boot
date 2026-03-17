@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/infinityos/backend/internal/auth"
+	"github.com/bootx/backend/internal/auth"
 )
 
 const (

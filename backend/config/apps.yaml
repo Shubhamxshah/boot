@@ -2,7 +2,7 @@ apps:
   - id: terminal
     name: Terminal
     description: Command-line terminal shell
-    image: infinityos/ubuntu:latest
+    image: bootx/ubuntu:latest
     cpu_cores: 0.5
     memory_gb: 1
     gpu_required: false
@@ -14,7 +14,7 @@ apps:
   - id: vscode
     name: VS Code
     description: Visual Studio Code browser-based IDE
-    image: infinityos/vscode:latest
+    image: bootx/vscode:latest
     cpu_cores: 2
     memory_gb: 4
     gpu_required: false
@@ -26,7 +26,7 @@ apps:
   - id: ubuntu-desktop
     name: Ubuntu Desktop
     description: Full Ubuntu 22.04 desktop environment
-    image: infinityos/ubuntu:latest
+    image: bootx/ubuntu:latest
     cpu_cores: 2
     memory_gb: 4
     gpu_required: false
@@ -38,7 +38,7 @@ apps:
   - id: blender
     name: Blender
     description: 3D creation suite for modeling, animation, rendering
-    image: infinityos/blender:latest
+    image: bootx/blender:latest
     cpu_cores: 4
     memory_gb: 8
     gpu_required: false
@@ -50,7 +50,7 @@ apps:
   - id: gazebo
     name: Gazebo Sim
     description: Robot simulation environment
-    image: infinityos/gazebo:latest
+    image: bootx/gazebo:latest
     cpu_cores: 4
     memory_gb: 8
     gpu_required: false

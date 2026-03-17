@@ -12,7 +12,7 @@ export function CreditsPanel() {
     <div className="space-y-10">
       <div>
         <h3 className="text-xl font-semibold mb-2" style={{ color: "rgba(255,255,255,0.9)" }}>Credits</h3>
-        <p className="text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>Manage your InfinityOS credits</p>
+        <p className="text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>Manage your bootx credits</p>
       </div>
 
       {/* Balance card */}

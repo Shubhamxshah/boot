@@ -10,6 +10,6 @@ import (
 func HealthCheck(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":  "ok",
-		"service": "infinityos-backend",
+		"service": "bootx-backend",
 	})
 }

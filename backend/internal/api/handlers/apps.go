@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/infinityos/backend/internal/warmpool"
+	"github.com/bootx/backend/internal/warmpool"
 )
 
 // AppHandler serves app definition endpoints.

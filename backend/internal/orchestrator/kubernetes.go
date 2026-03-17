@@ -15,11 +15,11 @@ import (
 )
 
 const (
-	k8sNamespace     = "infinityos"
+	k8sNamespace     = "bootx"
 	k8sLabelApp      = "app"
-	k8sLabelSession  = "infinityos-session-id"
-	k8sLabelAppID    = "infinityos-app-id"
-	k8sAppValue      = "infinityos-session"
+	k8sLabelSession  = "bootx-session-id"
+	k8sLabelAppID    = "bootx-app-id"
+	k8sAppValue      = "bootx-session"
 )
 
 // KubernetesOrchestrator launches sessions as Kubernetes Pods.
@@ -65,7 +65,7 @@ func NewKubernetesOrchestrator(kubeconfigPath string, gpuEnabled bool) (*Kuberne
 }
 
 func (k *KubernetesOrchestrator) Launch(ctx context.Context, cfg SessionConfig) (*SessionInfo, error) {
-	podName := fmt.Sprintf("infinityos-%s", cfg.SessionID)
+	podName := fmt.Sprintf("bootx-%s", cfg.SessionID)
 
 	cpuReq := resource.MustParse(fmt.Sprintf("%dm", int(cfg.CPUCores*1000)))
 	memReq := resource.MustParse(fmt.Sprintf("%dGi", cfg.MemoryGB))
@@ -202,7 +202,7 @@ func (k *KubernetesOrchestrator) Launch(ctx context.Context, cfg SessionConfig) 
 }
 
 func (k *KubernetesOrchestrator) Stop(ctx context.Context, sessionID string) error {
-	podName := fmt.Sprintf("infinityos-%s", sessionID)
+	podName := fmt.Sprintf("bootx-%s", sessionID)
 
 	if err := k.client.CoreV1().Pods(k8sNamespace).Delete(ctx, podName, metav1.DeleteOptions{}); err != nil {
 		if !errors.IsNotFound(err) {
@@ -220,7 +220,7 @@ func (k *KubernetesOrchestrator) Stop(ctx context.Context, sessionID string) err
 }
 
 func (k *KubernetesOrchestrator) GetStatus(ctx context.Context, sessionID string) (string, error) {
-	podName := fmt.Sprintf("infinityos-%s", sessionID)
+	podName := fmt.Sprintf("bootx-%s", sessionID)
 	pod, err := k.client.CoreV1().Pods(k8sNamespace).Get(ctx, podName, metav1.GetOptions{})
 	if errors.IsNotFound(err) {
 		return "stopped", nil

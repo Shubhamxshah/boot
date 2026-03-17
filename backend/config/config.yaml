@@ -3,7 +3,7 @@ server:
   environment: development
 
 database:
-  url: "postgres://infinityos:infinityos@localhost:5432/infinityos"
+  url: "postgres://bootx:bootx@localhost:5432/bootx"
 
 redis:
   url: "redis://localhost:6380"

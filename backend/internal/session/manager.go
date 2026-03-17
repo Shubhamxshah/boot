@@ -7,9 +7,9 @@ import (
 	"path/filepath"
 	"time"
 
-	db "github.com/infinityos/backend/db/generated"
-	"github.com/infinityos/backend/internal/orchestrator"
-	"github.com/infinityos/backend/internal/warmpool"
+	db "github.com/bootx/backend/db/generated"
+	"github.com/bootx/backend/internal/orchestrator"
+	"github.com/bootx/backend/internal/warmpool"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog/log"

@@ -45,7 +45,7 @@ export function LoginPage() {
               >
                 ∞
               </div>
-              <h1 className="text-2xl font-bold text-[#e8f0ec]">InfinityOS</h1>
+              <h1 className="text-2xl font-bold text-[#e8f0ec]">bootx</h1>
               <p className="text-[#6b8a7a] text-sm mt-1">Run anything. From anywhere.</p>
             </div>
 

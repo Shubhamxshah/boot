@@ -305,7 +305,7 @@ export function TopBar() {
                       className="flex flex-col gap-4"
                     >
                       <div className="mb-6">
-                        <h3 className="text-base font-semibold" style={{ color: "#ffffff", marginBottom: 5 }}>Welcome to Infinity</h3>
+                        <h3 className="text-base font-semibold" style={{ color: "#ffffff", marginBottom: 5 }}>Welcome to bootx</h3>
                         <p className="text-xs" style={{ color: "rgba(255,255,255,0.45)" }}>Sign in to sync your workspace across devices</p>
                       </div>
 

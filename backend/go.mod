@@ -1,4 +1,4 @@
-module github.com/infinityos/backend
+module github.com/bootx/backend
 
 go 1.22.0
 

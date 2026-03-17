@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/infinityos/backend/internal/models"
+	"github.com/bootx/backend/internal/models"
 	"gopkg.in/yaml.v3"
 )
 

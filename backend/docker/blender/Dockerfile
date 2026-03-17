@@ -1,4 +1,4 @@
-FROM infinityos/base:latest
+FROM bootx/base:latest
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV BLENDER_VERSION=4.1.1

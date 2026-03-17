@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	db "github.com/infinityos/backend/db/generated"
-	"github.com/infinityos/backend/internal/orchestrator"
+	db "github.com/bootx/backend/db/generated"
+	"github.com/bootx/backend/internal/orchestrator"
 	"github.com/rs/zerolog/log"
 )
 

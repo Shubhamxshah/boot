@@ -12,7 +12,7 @@ const DOCK_APPS = [
   { id: "terminal", name: "Terminal", icon: <TerminalIcon />, color: "#00c896", windowType: "terminal" as const, width: 800, height: 500 },
   { id: "vscode", name: "VS Code", icon: <VSCodeIcon />, color: "#007ACC" },
   { id: "blender", name: "Blender", icon: <BlenderIcon />, color: "#EA7600" },
-  { id: "ubuntu", name: "Ubuntu", icon: <UbuntuIcon />, color: "#E95420" },
+  { id: "ubuntu-desktop", name: "Ubuntu", icon: <UbuntuIcon />, color: "#E95420" },
   { id: "gazebo", name: "Gazebo", icon: <GazeboIcon />, color: "#6B4FBB" },
 ];
 
