@@ -442,12 +442,10 @@ export function FileManagerContent() {
             <div className="p-4">
               <div
                 className="inline-flex flex-col items-center gap-2 p-4 rounded-xl cursor-pointer select-none transition-colors hover:bg-[#111f18]"
-                style={{ border: "1px solid rgba(255,255,255,0.06)" }}
                 onDoubleClick={enterFiles}
               >
                 <HardDrive size={44} style={{ color: "#e0a855" }} />
                 <span style={{ color: "#c8d8d0", fontSize: 12 }}>files</span>
-                <span style={{ color: "#3a5040", fontSize: 11 }}>Local storage</span>
               </div>
             </div>
           )}
@@ -623,8 +621,8 @@ function SidebarSection({ title, children }: { title: string; children: React.Re
   return (
     <div className="mb-3">
       <p
-        className="px-4 pb-1 pt-3"
-        style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.1em", color: "#2d4035", textTransform: "uppercase" }}
+        className="px-4 pb-1 pt-3 "
+        style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.1em", color: "#2d4035", textTransform: "uppercase", margin: 4 }}
       >
         {title}
       </p>
@@ -657,7 +655,7 @@ function SidebarItem({
       className="w-full flex items-center gap-2.5 text-left"
       style={{
         padding: "5px 10px",
-        margin: "1px 6px",
+        margin: "6px",
         width: "calc(100% - 12px)",
         borderRadius: 6,
         background: active ? "rgba(0,200,150,0.1)" : "transparent",
