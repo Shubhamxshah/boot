@@ -34,14 +34,14 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "8005:8005"
     environment:
       - DATABASE_URL=postgres://infinityos:infinityos@postgres:5432/infinityos
       - REDIS_URL=redis://redis:6379
       - JWT_SECRET=${JWT_SECRET:-changeme-in-production}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-      - GOOGLE_REDIRECT_URL=${GOOGLE_REDIRECT_URL:-http://localhost:8080/api/v1/auth/google/callback}
+      - GOOGLE_REDIRECT_URL=${GOOGLE_REDIRECT_URL:-http://localhost:8005/api/v1/auth/google/callback}
       - FRONTEND_URL=${FRONTEND_URL:-http://localhost:3000}
       - ORCHESTRATOR=${ORCHESTRATOR:-docker}
       - GPU_ENABLED=${GPU_ENABLED:-false}

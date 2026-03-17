@@ -29,7 +29,7 @@ export const filesApi = {
     const token =
       typeof window !== "undefined" ? localStorage.getItem("access_token") : "";
     const base =
-      process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
+      process.env.NEXT_PUBLIC_API_URL || "http://localhost:8005/api/v1";
     const res = await fetch(
       `${base}/files/download?path=${encodeURIComponent(path)}`,
       { headers: { Authorization: `Bearer ${token}` } }
@@ -48,7 +48,7 @@ export const filesApi = {
     const token =
       typeof window !== "undefined" ? localStorage.getItem("access_token") : "";
     const base =
-      process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
+      process.env.NEXT_PUBLIC_API_URL || "http://localhost:8005/api/v1";
     const form = new FormData();
     form.append("file", file);
     const res = await fetch(
@@ -67,7 +67,7 @@ export const filesApi = {
     const token =
       typeof window !== "undefined" ? localStorage.getItem("access_token") : "";
     const base =
-      process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
+      process.env.NEXT_PUBLIC_API_URL || "http://localhost:8005/api/v1";
     const wsBase = base.replace(/^http/, "ws");
     return `${wsBase}/terminal/ws?token=${token}&session_id=${sessionId}`;
   },

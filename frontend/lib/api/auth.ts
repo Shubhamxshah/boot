@@ -16,5 +16,5 @@ export const authApi = {
     apiClient.post<AuthResponse>("/auth/refresh", { refresh_token: refreshToken }),
 
   googleLoginUrl: () =>
-    `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1"}/auth/google/login`,
+    `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8005/api/v1"}/auth/google/login`,
 };

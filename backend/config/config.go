@@ -63,7 +63,7 @@ func Load() (*Config, error) {
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
 	// defaults
-	viper.SetDefault("server.port", 8080)
+	viper.SetDefault("server.port", 8005)
 	viper.SetDefault("server.environment", "development")
 	viper.SetDefault("auth.jwt_expiry_hours", 24)
 	viper.SetDefault("auth.refresh_token_expiry_days", 30)

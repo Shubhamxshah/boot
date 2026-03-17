@@ -251,7 +251,7 @@ export function TopBar() {
         <div className="relative shrink-0 " ref={menuRef} style={{ marginLeft: 16 }}>
           <button
             onClick={handleAvatarClick}
-            className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold overflow-hidden transition-all"
+            className="w-9 h-9 rounded-full relative flex items-center justify-center text-sm font-semibold overflow-hidden transition-all"
             style={{
               background: "rgba(255,255,255,0.08)",
               border: "1px solid rgba(255,255,255,0.15)",
@@ -260,10 +260,13 @@ export function TopBar() {
             onMouseOver={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.14)")}
             onMouseOut={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.08)")}
           >
-            {isAuthenticated && user?.avatar_url ? (
-              <img src={user.avatar_url} alt="" className="w-full h-full object-cover" />
-            ) : isAuthenticated ? (
-              <span style={{ color: "#ffffff" }}>{initials}</span>
+            {isAuthenticated ? (
+              <>
+                <span style={{ color: "#ffffff" }}>{initials}</span>
+                {user?.avatar_url && (
+                  <img src={user.avatar_url} alt="" className="absolute inset-0 w-full h-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+                )}
+              </>
             ) : (
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
@@ -396,12 +399,13 @@ export function TopBar() {
               >
                 <div className="flex flex-col items-center" style={{ padding: "20px 20px 16px 20px", gap: 10 }}>
                   <div
-                    className="w-11 h-11 rounded-full flex items-center justify-center text-sm font-semibold overflow-hidden shrink-0"
+                    className="w-11 h-11 rounded-full relative flex items-center justify-center text-sm font-semibold overflow-hidden shrink-0"
                     style={{ background: "rgba(255,255,255,0.1)", color: "#ffffff" }}
                   >
-                    {user?.avatar_url ? (
-                      <img src={user.avatar_url} alt="" className="w-full h-full object-cover" />
-                    ) : initials}
+                    {initials}
+                    {user?.avatar_url && (
+                      <img src={user.avatar_url} alt="" className="absolute inset-0 w-full h-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+                    )}
                   </div>
                   <div className="text-center min-w-0">
                     <p className="text-sm font-medium truncate" style={{ color: "#ffffff" }}>{user?.name}</p>

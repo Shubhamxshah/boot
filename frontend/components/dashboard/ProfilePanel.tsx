@@ -29,13 +29,12 @@ export function ProfilePanel() {
       <div className="flex flex-col items-center" style={{ gap: 14, paddingBottom: 8 }}>
         <div className="relative">
           <div
-            className="w-24 h-24 rounded-full flex items-center justify-center text-2xl font-bold overflow-hidden"
+            className="w-24 h-24 rounded-full relative flex items-center justify-center text-2xl font-bold overflow-hidden"
             style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.7)" }}
           >
-            {user?.avatar_url ? (
-              <img src={user.avatar_url} alt="" className="w-full h-full object-cover" />
-            ) : (
-              user?.name?.split(" ").map((n) => n[0]).join("").slice(0, 2)
+            {user?.name?.split(" ").map((n) => n[0]).join("").slice(0, 2)}
+            {user?.avatar_url && (
+              <img src={user.avatar_url} alt="" className="absolute inset-0 w-full h-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} />
             )}
           </div>
           <button
