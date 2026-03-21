@@ -1,4 +1,4 @@
-.PHONY: all build run test lint migrate-up migrate-down migrate-status docker-up docker-down docker-build tidy sqlc-generate help
+.PHONY: all build run dev prod test lint migrate-up migrate-down migrate-status docker-up docker-down docker-build tidy sqlc-generate help
 
 BINARY := bin/server
 CMD     := ./cmd/server
@@ -23,6 +23,10 @@ run:
 ## dev: Run with Air hot reload
 dev:
 	$(AIR)
+
+## prod: Build and run the server binary with .env.prod
+prod: build
+	env $(shell grep -v '^#' .env.prod | xargs) ./$(BINARY)
 
 ## test: Run all tests
 test:
