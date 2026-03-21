@@ -75,3 +75,14 @@ func (a *Allocator) UsedCount() int {
 	defer a.mu.Unlock()
 	return len(a.used)
 }
+
+// MarkUsed marks the given ports as already allocated (e.g. recovered from Docker on restart).
+func (a *Allocator) MarkUsed(ports []int) {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	for _, p := range ports {
+		if p >= minPort && p <= maxPort {
+			a.used[p] = true
+		}
+	}
+}

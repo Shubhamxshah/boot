@@ -24,9 +24,9 @@ type CreditPack struct {
 }
 
 var creditPacks = []CreditPack{
-	{ID: "starter", Name: "Starter", Credits: 500, AmountCents: 500},            // $5
-	{ID: "professional", Name: "Professional", Credits: 2000, AmountCents: 2000}, // $20
-	{ID: "team", Name: "Team", Credits: 7000, AmountCents: 7000},                // $70
+	{ID: "starter", Name: "Starter", Credits: 500, AmountCents: 449},            // ₹449 (~$5)
+	{ID: "professional", Name: "Professional", Credits: 2000, AmountCents: 1699}, // ₹1699 (~$20)
+	{ID: "team", Name: "Team", Credits: 7000, AmountCents: 5999},                // ₹5999 (~$70)
 }
 
 // BillingHandler handles billing-related HTTP requests.

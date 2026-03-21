@@ -40,9 +40,35 @@ func NewDockerOrchestrator(gpuEnabled bool) (*DockerOrchestrator, error) {
 	if err != nil {
 		return nil, fmt.Errorf("docker client: %w", err)
 	}
+
+	alloc := ports.NewAllocator()
+
+	// Recover port state from any already-running bootx containers so we don't
+	// re-allocate ports that Docker has already bound.
+	f := filters.NewArgs()
+	f.Add("label", labelSessionID)
+	existing, err := cli.ContainerList(context.Background(), container.ListOptions{
+		All:     true,
+		Filters: f,
+	})
+	if err == nil {
+		var usedPorts []int
+		for _, c := range existing {
+			for _, p := range c.Ports {
+				if p.PrivatePort == 6080 && p.PublicPort != 0 {
+					usedPorts = append(usedPorts, int(p.PublicPort))
+				}
+			}
+		}
+		if len(usedPorts) > 0 {
+			alloc.MarkUsed(usedPorts)
+			log.Info().Ints("ports", usedPorts).Msg("recovered port allocations from existing containers")
+		}
+	}
+
 	return &DockerOrchestrator{
 		client:     cli,
-		allocator:  ports.NewAllocator(),
+		allocator:  alloc,
 		gpuEnabled: gpuEnabled,
 	}, nil
 }
@@ -124,6 +150,15 @@ func (d *DockerOrchestrator) Launch(ctx context.Context, cfg SessionConfig) (*Se
 	if err := d.client.ContainerStart(ctx, resp.ID, container.StartOptions{}); err != nil {
 		d.allocator.Release(hostPort)
 		_ = d.client.ContainerRemove(ctx, resp.ID, container.RemoveOptions{Force: true})
+
+		// If Docker rejected the port as already bound (external process or race),
+		// mark it used and retry once with a fresh port.
+		if strings.Contains(err.Error(), "port is already allocated") ||
+			strings.Contains(err.Error(), "address already in use") {
+			d.allocator.MarkUsed([]int{hostPort})
+			return d.Launch(ctx, cfg)
+		}
+
 		return nil, fmt.Errorf("container start: %w", err)
 	}
 

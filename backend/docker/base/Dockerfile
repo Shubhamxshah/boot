@@ -7,7 +7,6 @@ RUN apt-get update && apt-get install -y \
     supervisor \
     x11vnc \
     xvfb \
-    novnc \
     websockify \
     openbox \
     xterm \
@@ -18,8 +17,12 @@ RUN apt-get update && apt-get install -y \
     fonts-dejavu \
     && rm -rf /var/lib/apt/lists/*
 
-# noVNC setup
-RUN ln -s /usr/share/novnc/vnc.html /usr/share/novnc/index.html 2>/dev/null || true
+# noVNC setup - install from source to avoid version mismatch with dragThreshold
+RUN wget -q https://github.com/novnc/noVNC/archive/refs/tags/v1.5.0.tar.gz -O /tmp/novnc.tar.gz \
+    && mkdir -p /usr/share/novnc \
+    && tar -xzf /tmp/novnc.tar.gz -C /usr/share/novnc --strip-components=1 \
+    && rm /tmp/novnc.tar.gz \
+    && ln -s /usr/share/novnc/vnc.html /usr/share/novnc/index.html 2>/dev/null || true
 
 ENV DISPLAY=:1
 ENV VNC_PORT=5900

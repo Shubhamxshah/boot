@@ -60,10 +60,10 @@ docker-up:
 docker-down:
 	docker-compose down
 
-## docker-build: Build all Docker images
+## docker-build: Build all Docker images (use NO_CACHE=1 to skip cache)
 docker-build:
-	docker build -t bootx/base:latest    -f docker/base/Dockerfile    docker/base
-	docker build -t bootx/vscode:latest  -f docker/vscode/Dockerfile  docker/vscode
-	docker build -t bootx/ubuntu:latest  -f docker/ubuntu/Dockerfile  docker/ubuntu
-	docker build -t bootx/blender:latest -f docker/blender/Dockerfile docker/blender
-	docker build -t bootx/gazebo:latest  -f docker/gazebo/Dockerfile  docker/gazebo
+	docker build $(if $(NO_CACHE),--no-cache) -t bootx/base:latest    -f docker/base/Dockerfile    docker/base
+	docker build $(if $(NO_CACHE),--no-cache) -t bootx/vscode:latest  -f docker/vscode/Dockerfile  docker/vscode
+	docker build $(if $(NO_CACHE),--no-cache) -t bootx/ubuntu:latest  -f docker/ubuntu/Dockerfile  docker/ubuntu
+	docker build $(if $(NO_CACHE),--no-cache) -t bootx/blender:latest -f docker/blender/Dockerfile docker/blender
+	docker build $(if $(NO_CACHE),--no-cache) -t bootx/gazebo:latest  -f docker/gazebo/Dockerfile  docker/gazebo

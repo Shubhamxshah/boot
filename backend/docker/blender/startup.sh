@@ -1,3 +1,5 @@
 #!/bin/bash
 mkdir -p /userdata/blender-projects /userdata/.config
-exec blender /userdata/blender-projects
+startxfce4 &
+sleep 2
+exec blender
