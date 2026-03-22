@@ -4,6 +4,12 @@ VALUES ($1, 0)
 ON CONFLICT (user_id) DO UPDATE SET balance = user_credits.balance
 RETURNING user_id, balance, updated_at;
 
+-- name: InsertUserCreditsIfNew :one
+INSERT INTO user_credits (user_id, balance)
+VALUES ($1, 0)
+ON CONFLICT (user_id) DO NOTHING
+RETURNING user_id, balance, updated_at;
+
 -- name: DeductCredits :one
 UPDATE user_credits
 SET balance = balance - $2, updated_at = NOW()

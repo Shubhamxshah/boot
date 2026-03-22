@@ -135,6 +135,21 @@ func (q *Queries) GetOrCreateUserCredits(ctx context.Context, userID uuid.UUID) 
 	return uc, err
 }
 
+const insertUserCreditsIfNew = `-- name: InsertUserCreditsIfNew :one
+INSERT INTO user_credits (user_id, balance)
+VALUES ($1, 0)
+ON CONFLICT (user_id) DO NOTHING
+RETURNING user_id, balance, updated_at`
+
+// InsertUserCreditsIfNew inserts a zero-balance credits row only when no row exists yet.
+// Returns pgx.ErrNoRows if the user already has a credits record (conflict).
+func (q *Queries) InsertUserCreditsIfNew(ctx context.Context, userID uuid.UUID) (UserCredits, error) {
+	row := q.db.QueryRow(ctx, insertUserCreditsIfNew, userID)
+	var uc UserCredits
+	err := row.Scan(&uc.UserID, &uc.Balance, &uc.UpdatedAt)
+	return uc, err
+}
+
 const deductCredits = `-- name: DeductCredits :one
 UPDATE user_credits
 SET balance = balance - $2, updated_at = NOW()

@@ -31,6 +31,7 @@ type AuthHandler struct {
 	redis           *redis.Client
 	frontendURL     string
 	refreshTokenTTL time.Duration
+	welcomeCredits  int64
 }
 
 // NewAuthHandler creates an AuthHandler.
@@ -41,6 +42,7 @@ func NewAuthHandler(
 	redisClient *redis.Client,
 	frontendURL string,
 	refreshTokenExpiryDays int,
+	welcomeCredits int64,
 ) *AuthHandler {
 	return &AuthHandler{
 		queries:         queries,
@@ -49,6 +51,7 @@ func NewAuthHandler(
 		redis:           redisClient,
 		frontendURL:     frontendURL,
 		refreshTokenTTL: time.Duration(refreshTokenExpiryDays) * 24 * time.Hour,
+		welcomeCredits:  welcomeCredits,
 	}
 }
 
@@ -117,6 +120,7 @@ func (h *AuthHandler) GoogleCallback(c *gin.Context) {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create user"})
 				return
 			}
+			h.grantWelcomeCredits(ctx, user.ID)
 		} else if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "database error"})
 			return
@@ -185,6 +189,8 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		return
 	}
 
+	h.grantWelcomeCredits(ctx, user.ID)
+
 	token, refreshToken, err := h.issueTokens(ctx, user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to issue tokens"})
@@ -235,6 +241,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	}
 
 	_ = h.queries.UpdateUserLastLogin(ctx, user.ID)
+	h.grantWelcomeCredits(ctx, user.ID)
 
 	token, refreshToken, err := h.issueTokens(ctx, user)
 	if err != nil {
@@ -388,4 +395,33 @@ func generateState() (string, error) {
 		return "", err
 	}
 	return base64.URLEncoding.EncodeToString(b), nil
+}
+
+// grantWelcomeCredits grants the welcome bonus only if the user has no credits record yet.
+// Safe to call on every login — idempotent via INSERT … ON CONFLICT DO NOTHING.
+func (h *AuthHandler) grantWelcomeCredits(ctx context.Context, userID uuid.UUID) {
+	// Only proceeds if the row was freshly inserted; returns ErrNoRows on conflict.
+	_, err := h.queries.InsertUserCreditsIfNew(ctx, userID)
+	if err == pgx.ErrNoRows {
+		return // user already has a credits record
+	}
+	if err != nil {
+		log.Error().Err(err).Str("user_id", userID.String()).Msg("failed to init user credits for welcome bonus")
+		return
+	}
+	uc, err := h.queries.AddCredits(ctx, db.AddCreditsParams{UserID: userID, Amount: h.welcomeCredits})
+	if err != nil {
+		log.Error().Err(err).Str("user_id", userID.String()).Msg("failed to add welcome credits")
+		return
+	}
+	_, err = h.queries.CreateCreditTransaction(ctx, db.CreateCreditTransactionParams{
+		UserID:       userID,
+		Type:         "credit",
+		Amount:       h.welcomeCredits,
+		BalanceAfter: uc.Balance,
+		Description:  "Welcome bonus",
+	})
+	if err != nil {
+		log.Error().Err(err).Str("user_id", userID.String()).Msg("failed to record welcome credit transaction")
+	}
 }

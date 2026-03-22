@@ -139,6 +139,7 @@ func main() {
 		redisClient,
 		cfg.App.FrontendURL,
 		cfg.Auth.RefreshTokenExpiryDays,
+		cfg.Billing.WelcomeCredits,
 	)
 	// Billing config
 	billingCfg := billing.Config{

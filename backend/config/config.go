@@ -59,6 +59,7 @@ type BillingConfig struct {
 	CPURate           float64 `mapstructure:"cpu_rate"`
 	MemRate           float64 `mapstructure:"mem_rate"`
 	GPURate           float64 `mapstructure:"gpu_rate"`
+	WelcomeCredits    int64   `mapstructure:"welcome_credits"`
 	RazorpayKeyID     string  `mapstructure:"razorpay_key_id"`
 	RazorpayKeySecret string  `mapstructure:"razorpay_key_secret"`
 }
@@ -84,6 +85,7 @@ func Load() (*Config, error) {
 	viper.SetDefault("billing.cpu_rate", 0.1)
 	viper.SetDefault("billing.mem_rate", 0.05)
 	viper.SetDefault("billing.gpu_rate", 2.0)
+	viper.SetDefault("billing.welcome_credits", 100)
 
 	_ = viper.ReadInConfig()
 
@@ -108,6 +110,7 @@ func Load() (*Config, error) {
 	_ = viper.BindEnv("billing.cpu_rate", "BILLING_CPU_RATE")
 	_ = viper.BindEnv("billing.mem_rate", "BILLING_MEM_RATE")
 	_ = viper.BindEnv("billing.gpu_rate", "BILLING_GPU_RATE")
+	_ = viper.BindEnv("billing.welcome_credits", "BILLING_WELCOME_CREDITS")
 	_ = viper.BindEnv("billing.razorpay_key_id", "RAZORPAY_KEY_ID")
 	_ = viper.BindEnv("billing.razorpay_key_secret", "RAZORPAY_KEY_SECRET")
 
