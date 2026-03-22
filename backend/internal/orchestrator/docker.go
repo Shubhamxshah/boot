@@ -3,8 +3,10 @@ package orchestrator
 import (
 	"context"
 	"fmt"
+	"net"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/filters"
@@ -172,6 +174,12 @@ func (d *DockerOrchestrator) Launch(ctx context.Context, cfg SessionConfig) (*Se
 		Int("host_port", hostPort).
 		Msg("container started")
 
+	// Wait for noVNC to be ready before returning so the session is only
+	// marked ready once the browser can actually connect.
+	if err := waitForPort(hostPort, 60*time.Second); err != nil {
+		log.Warn().Err(err).Int("port", hostPort).Str("session_id", cfg.SessionID).Msg("noVNC readiness check timed out")
+	}
+
 	return &SessionInfo{
 		ContainerID: resp.ID,
 		Port:        hostPort,
@@ -307,6 +315,21 @@ func (d *DockerOrchestrator) listBySessionID(ctx context.Context, sessionID stri
 		result = append(result, e)
 	}
 	return result, nil
+}
+
+// waitForPort polls until the TCP port accepts connections or the timeout expires.
+func waitForPort(port int, timeout time.Duration) error {
+	addr := fmt.Sprintf("127.0.0.1:%d", port)
+	deadline := time.Now().Add(timeout)
+	for time.Now().Before(deadline) {
+		conn, err := net.DialTimeout("tcp", addr, time.Second)
+		if err == nil {
+			conn.Close()
+			return nil
+		}
+		time.Sleep(500 * time.Millisecond)
+	}
+	return fmt.Errorf("port %d not ready after %s", port, timeout)
 }
 
 // buildVNCUrl returns the noVNC URL for the given host port.
