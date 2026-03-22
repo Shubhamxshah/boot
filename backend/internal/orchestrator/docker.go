@@ -314,7 +314,9 @@ func (d *DockerOrchestrator) listBySessionID(ctx context.Context, sessionID stri
 // Otherwise falls back to direct host:port (dev mode).
 func (d *DockerOrchestrator) buildVNCUrl(hostPort int) string {
 	if d.vncBaseURL != "" {
-		return fmt.Sprintf("%s/%d/vnc.html?autoconnect=1&reconnect=1&resize=scale", d.vncBaseURL, hostPort)
+		// Tell noVNC to connect its WebSocket to /novnc/<port>/websockify so
+		// nginx can proxy it to the right container.
+		return fmt.Sprintf("%s/%d/vnc.html?path=novnc/%d/websockify&autoconnect=1&reconnect=1&resize=scale", d.vncBaseURL, hostPort, hostPort)
 	}
 	return fmt.Sprintf("http://%s:%d/vnc.html?autoconnect=1&reconnect=1&resize=scale", d.publicHost, hostPort)
 }
