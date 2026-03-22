@@ -3,7 +3,7 @@ package orchestrator
 import (
 	"context"
 	"fmt"
-	"net"
+	"net/http"
 	"strconv"
 	"strings"
 	"time"
@@ -317,19 +317,20 @@ func (d *DockerOrchestrator) listBySessionID(ctx context.Context, sessionID stri
 	return result, nil
 }
 
-// waitForPort polls until the TCP port accepts connections or the timeout expires.
+// waitForPort polls via HTTP until noVNC is serving or the timeout expires.
 func waitForPort(port int, timeout time.Duration) error {
-	addr := fmt.Sprintf("127.0.0.1:%d", port)
+	url := fmt.Sprintf("http://127.0.0.1:%d/", port)
+	client := &http.Client{Timeout: 2 * time.Second}
 	deadline := time.Now().Add(timeout)
 	for time.Now().Before(deadline) {
-		conn, err := net.DialTimeout("tcp", addr, time.Second)
+		resp, err := client.Get(url)
 		if err == nil {
-			conn.Close()
+			resp.Body.Close()
 			return nil
 		}
 		time.Sleep(500 * time.Millisecond)
 	}
-	return fmt.Errorf("port %d not ready after %s", port, timeout)
+	return fmt.Errorf("noVNC on port %d not ready after %s", port, timeout)
 }
 
 // buildVNCUrl returns the noVNC URL for the given host port.
