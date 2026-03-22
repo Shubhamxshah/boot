@@ -29,11 +29,12 @@ type DockerOrchestrator struct {
 	allocator  *ports.Allocator
 	gpuEnabled bool
 	publicHost string
+	vncBaseURL string
 }
 
 // NewDockerOrchestrator creates a new DockerOrchestrator using the Docker daemon
 // found via the DOCKER_HOST environment variable (or the default socket).
-func NewDockerOrchestrator(gpuEnabled bool, publicHost string) (*DockerOrchestrator, error) {
+func NewDockerOrchestrator(gpuEnabled bool, publicHost, vncBaseURL string) (*DockerOrchestrator, error) {
 	cli, err := dockerclient.NewClientWithOpts(
 		dockerclient.FromEnv,
 		dockerclient.WithAPIVersionNegotiation(),
@@ -72,6 +73,7 @@ func NewDockerOrchestrator(gpuEnabled bool, publicHost string) (*DockerOrchestra
 		allocator:  alloc,
 		gpuEnabled: gpuEnabled,
 		publicHost: publicHost,
+		vncBaseURL: vncBaseURL,
 	}, nil
 }
 
@@ -173,7 +175,7 @@ func (d *DockerOrchestrator) Launch(ctx context.Context, cfg SessionConfig) (*Se
 	return &SessionInfo{
 		ContainerID: resp.ID,
 		Port:        hostPort,
-		VNCUrl:      fmt.Sprintf("http://%s:%d/vnc.html?autoconnect=1&reconnect=1&resize=scale", d.publicHost, hostPort),
+		VNCUrl:      d.buildVNCUrl(hostPort),
 	}, nil
 }
 
@@ -305,4 +307,14 @@ func (d *DockerOrchestrator) listBySessionID(ctx context.Context, sessionID stri
 		result = append(result, e)
 	}
 	return result, nil
+}
+
+// buildVNCUrl returns the noVNC URL for the given host port.
+// If vncBaseURL is set (e.g. "https://bootx.in/novnc"), uses path-based routing through nginx.
+// Otherwise falls back to direct host:port (dev mode).
+func (d *DockerOrchestrator) buildVNCUrl(hostPort int) string {
+	if d.vncBaseURL != "" {
+		return fmt.Sprintf("%s/%d/vnc.html?autoconnect=1&reconnect=1&resize=scale", d.vncBaseURL, hostPort)
+	}
+	return fmt.Sprintf("http://%s:%d/vnc.html?autoconnect=1&reconnect=1&resize=scale", d.publicHost, hostPort)
 }

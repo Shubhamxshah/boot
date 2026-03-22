@@ -233,7 +233,7 @@ func buildOrchestrator(cfg *config.Config) (orchestrator.ContainerOrchestrator, 
 		return orchestrator.NewGPURouter(k8sOrch, nil), nil
 
 	default: // "docker"
-		dockerOrch, err := orchestrator.NewDockerOrchestrator(cfg.App.GPUEnabled, cfg.App.PublicHost)
+		dockerOrch, err := orchestrator.NewDockerOrchestrator(cfg.App.GPUEnabled, cfg.App.PublicHost, cfg.App.VNCBaseURL)
 		if err != nil {
 			return nil, fmt.Errorf("docker orchestrator: %w", err)
 		}
