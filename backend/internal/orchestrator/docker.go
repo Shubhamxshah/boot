@@ -28,11 +28,12 @@ type DockerOrchestrator struct {
 	client     *dockerclient.Client
 	allocator  *ports.Allocator
 	gpuEnabled bool
+	publicHost string
 }
 
 // NewDockerOrchestrator creates a new DockerOrchestrator using the Docker daemon
 // found via the DOCKER_HOST environment variable (or the default socket).
-func NewDockerOrchestrator(gpuEnabled bool) (*DockerOrchestrator, error) {
+func NewDockerOrchestrator(gpuEnabled bool, publicHost string) (*DockerOrchestrator, error) {
 	cli, err := dockerclient.NewClientWithOpts(
 		dockerclient.FromEnv,
 		dockerclient.WithAPIVersionNegotiation(),
@@ -70,6 +71,7 @@ func NewDockerOrchestrator(gpuEnabled bool) (*DockerOrchestrator, error) {
 		client:     cli,
 		allocator:  alloc,
 		gpuEnabled: gpuEnabled,
+		publicHost: publicHost,
 	}, nil
 }
 
@@ -171,7 +173,7 @@ func (d *DockerOrchestrator) Launch(ctx context.Context, cfg SessionConfig) (*Se
 	return &SessionInfo{
 		ContainerID: resp.ID,
 		Port:        hostPort,
-		VNCUrl:      fmt.Sprintf("http://localhost:%d/vnc.html?autoconnect=1&reconnect=1&resize=scale", hostPort),
+		VNCUrl:      fmt.Sprintf("http://%s:%d/vnc.html?autoconnect=1&reconnect=1&resize=scale", d.publicHost, hostPort),
 	}, nil
 }
 

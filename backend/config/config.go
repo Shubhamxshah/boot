@@ -48,6 +48,7 @@ type AppConfig struct {
 	GPUEnabled   bool   `mapstructure:"gpu_enabled"`
 	RunpodAPIKey string `mapstructure:"runpod_api_key"`
 	FrontendURL  string `mapstructure:"frontend_url"`
+	PublicHost   string `mapstructure:"public_host"`
 }
 
 type WarmPoolConfig struct {
@@ -80,6 +81,7 @@ func Load() (*Config, error) {
 	viper.SetDefault("auth.refresh_token_expiry_days", 30)
 	viper.SetDefault("app.orchestrator", "docker")
 	viper.SetDefault("app.gpu_enabled", false)
+	viper.SetDefault("app.public_host", "localhost")
 	viper.SetDefault("warmpool.enabled", true)
 	viper.SetDefault("billing.base_rate", 0.5)
 	viper.SetDefault("billing.cpu_rate", 0.1)
@@ -101,6 +103,7 @@ func Load() (*Config, error) {
 	_ = viper.BindEnv("google.client_secret", "GOOGLE_CLIENT_SECRET")
 	_ = viper.BindEnv("google.redirect_url", "GOOGLE_REDIRECT_URL")
 	_ = viper.BindEnv("app.frontend_url", "FRONTEND_URL")
+	_ = viper.BindEnv("app.public_host", "PUBLIC_HOST")
 	_ = viper.BindEnv("app.orchestrator", "ORCHESTRATOR")
 	_ = viper.BindEnv("app.kubeconfig", "KUBECONFIG")
 	_ = viper.BindEnv("app.gpu_enabled", "GPU_ENABLED")
