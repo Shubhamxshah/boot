@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useCallback, useEffect } from "react";
+import { useRef, useCallback, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useWindowStore } from "@/store/windowStore";
 import { sessionsApi } from "@/lib/api/sessions";
@@ -27,7 +27,26 @@ export function AppWindow({ window: win }: Props) {
 
   const dragRef = useRef({ dragging: false, startX: 0, startY: 0, origX: 0, origY: 0 });
   const resizeRef = useRef({ resizing: false, startX: 0, startY: 0, origW: 0, origH: 0 });
+  const windowRef = useRef<HTMLDivElement>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const isFocused = focusedWindowId === win.sessionId;
+
+  useEffect(() => {
+    const handleFSChange = () => {
+      setIsFullscreen(document.fullscreenElement === windowRef.current);
+    };
+    document.addEventListener("fullscreenchange", handleFSChange);
+    return () => document.removeEventListener("fullscreenchange", handleFSChange);
+  }, []);
+
+  const toggleFullscreen = useCallback(async () => {
+    if (!windowRef.current) return;
+    if (document.fullscreenElement) {
+      await document.exitFullscreen();
+    } else {
+      await windowRef.current.requestFullscreen();
+    }
+  }, []);
 
   // Poll session when loading (for VNC app windows and terminal windows)
   const isSessionBacked = win.windowType === "app" || win.windowType === "terminal" || !win.windowType;
@@ -61,7 +80,7 @@ export function AppWindow({ window: win }: Props) {
       if (!dragRef.current.dragging) return;
       const dx = e.clientX - dragRef.current.startX;
       const dy = e.clientY - dragRef.current.startY;
-      updateWindowPosition(win.sessionId, dragRef.current.origX + dx, dragRef.current.origY + dy);
+      updateWindowPosition(win.sessionId, dragRef.current.origX + dx, Math.max(0, dragRef.current.origY + dy));
     };
 
     const onUp = () => {
@@ -124,6 +143,7 @@ export function AppWindow({ window: win }: Props) {
   return (
     <AnimatePresence>
       <motion.div
+        ref={windowRef}
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
@@ -163,7 +183,7 @@ export function AppWindow({ window: win }: Props) {
               style={{ background: "#e0a855" }}
             />
             <button
-              onClick={(e) => { e.stopPropagation(); maximizeWindow(win.sessionId); }}
+              onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }}
               className="w-3 h-3 rounded-full transition-opacity hover:opacity-80"
               style={{ background: "#55c855" }}
             />

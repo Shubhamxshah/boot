@@ -236,9 +236,9 @@ export function TopBar() {
   const initials = user?.name?.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) || "?";
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-200">
+    <div className="fixed top-0 left-0 right-0 z-[10] pointer-events-none">
       {/* Search bar + avatar — centered row */}
-      <div className="flex justify-center items-center" style={{ paddingTop: 62 }}>
+      <div className="flex justify-center items-center pointer-events-auto" style={{ paddingTop: 62 }}>
         <div
           className="flex items-center rounded-full overflow-hidden"
           style={{
