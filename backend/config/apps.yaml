@@ -41,7 +41,7 @@ apps:
     image: bootx/blender:latest
     cpu_cores: 4
     memory_gb: 8
-    gpu_required: false
+    gpu_required: true
     gpu_optional: true
     idle_minutes: 15
     warm_pool_size: 0
@@ -53,7 +53,7 @@ apps:
     image: bootx/gazebo:latest
     cpu_cores: 4
     memory_gb: 8
-    gpu_required: false
+    gpu_required: true 
     gpu_optional: true
     idle_minutes: 15
     warm_pool_size: 0
