@@ -11,7 +11,13 @@ function CallbackInner() {
 
   useEffect(() => {
     const token = params.get("token");
-    if (!token) { router.replace("/"); return; }
+    if (!token) { router.replace("/app"); return; }
+
+    // Guard against Strict Mode double-invoke
+    if (localStorage.getItem("access_token") === token) {
+      router.replace("/app");
+      return;
+    }
 
     localStorage.setItem("access_token", token);
     setToken(token);
@@ -19,9 +25,9 @@ function CallbackInner() {
     authApi.me().then((user) => {
       setUser(user);
       localStorage.setItem("user", JSON.stringify(user));
-      router.replace("/");
+      router.replace("/app");
     }).catch(() => {
-      router.replace("/");
+      router.replace("/app");
     });
   }, []);
 
