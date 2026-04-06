@@ -1,10 +1,7 @@
 # Environment files
-.env*
-.env.local
 .env*.local
 .env.prod
 .env*.prod 
-.env.production
 
 # OS
 .DS_Store
@@ -12,6 +9,7 @@ Thumbs.db
 
 # IDE
 .idea/
-.vscode/
 *.swp
 *.swo
+config.bat
+node_modules
